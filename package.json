@@ -1,0 +1,18 @@
+{
+	"name": "gymh-mensa",
+	"version": "1.0.0",
+	"license": "MIT",
+	"description": "GymH-Mensa-Parser",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"cheerio": "^1.0.0-rc.3",
+		"express": "^4.17.1",
+		"fs": "^0.0.1-security",
+		"html-minifier": "^4.0.0",
+		"puppeteer": "^2.1.0",
+		"request": "^2.88.0",
+		"zombie": "^6.1.4"
+	}
+}
