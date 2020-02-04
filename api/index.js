@@ -30,7 +30,6 @@ let set_params = (req, callback) => {
 };
 let start_it_up = (req, res, action) => {
 	gymh.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
-	gymh.Elternportal_Interface.init();
 	if (action == 'stundenplan') {
 		gymh.Elternportal_Interface.spawn_zombie('service/stundenplan', login_data, (html) => {
 			gymh.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
