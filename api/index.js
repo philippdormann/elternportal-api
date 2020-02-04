@@ -59,5 +59,5 @@ module.exports = (req, res) => {
 	// 	navigate(req, res, status);
 	// });
 	// send_json_response({ req, res });
-	send_json_response({ response: 'hello there' });
+	send_json_response(req, res, { response: 'hello there' });
 };
