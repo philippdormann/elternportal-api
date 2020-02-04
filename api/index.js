@@ -1,4 +1,4 @@
-const gymh_server_functions = require('./api/server-functions');
+const gymh_server_functions = require('./server-functions');
 // Zeit Now
 // lambda
 module.exports = (req, res) => {
