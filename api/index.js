@@ -1,4 +1,4 @@
-const gymh = require('../gh-elternportal');
+const gymh = require('./gh-elternportal');
 
 let login_data = {};
 let navigate = (req, res, status) => {
@@ -48,14 +48,16 @@ let start_it_up = (req, res) => {
 	}
 };
 let send_json_response = (req, res, content) => {
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	res.setHeader('Content-Type', 'application/json');
 	res.status(200).send(JSON.stringify(content));
 };
 
 module.exports = (req, res) => {
-	set_params(req, (status) => {
-		navigate(req, res, status);
-	});
+	// set_params(req, (status) => {
+	// 	navigate(req, res, status);
+	// });
+	// send_json_response({ req, res });
+	send_json_response({ response: 'hello there' });
 };
