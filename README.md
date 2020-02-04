@@ -1,7 +1,7 @@
 # gymh-elternportal-API
-### scraper for <https://heraugy.eltern-portal.org> (or *.eltern-portal.org)
+### scraper for <https://heraugy.eltern-portal.org> (or for that matter `*.eltern-portal.org`)
 <pre style="text-align:center">
-⚙️ yes, even more data 🔧
+⚙️ ahh yes, even more data 🔧
 </pre>
 
 ## 📚 dependencies
@@ -42,3 +42,4 @@ normally, you would run this with `now dev` - as of Now CLI 16.7.3 dev (beta) th
 ## 🛠️ development
 - rename `login-data.example.json` to `login-data.json`
 - edit `login-data.json` to your login data
+- `npm i` / `yarn install`

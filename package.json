@@ -1,8 +1,8 @@
 {
-	"name": "gymh-mensa",
+	"name": "gymh-elternportal",
 	"version": "1.0.0",
 	"license": "MIT",
-	"description": "GymH-Mensa-Parser",
+	"description": "GymH-Elternportal",
 	"scripts": {
 		"start": "node server.js"
 	},
@@ -10,8 +10,6 @@
 		"cheerio": "^1.0.0-rc.3",
 		"express": "^4.17.1",
 		"html-minifier": "^4.0.0",
-		"puppeteer": "^2.1.0",
-		"request": "^2.88.0",
 		"zombie": "^6.1.4"
 	}
 }
