@@ -55,9 +55,7 @@ let send_json_response = (req, res, content) => {
 };
 
 module.exports = (req, res) => {
-	// set_params(req, (status) => {
-	// 	navigate(req, res, status);
-	// });
-	// send_json_response({ req, res });
-	send_json_response(req, res, { response: 'hello there' });
+	set_params(req, (status) => {
+		navigate(req, res, status);
+	});
 };
