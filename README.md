@@ -4,6 +4,15 @@
 ⚙️ ahh yes, even more data 🔧
 </pre>
 
+## API usage
+- `https://elternportal-api.now.sh/?username=<username>&password=<password>&action=<action>`
+- `username`: Elternportal email
+- `password`: Elternportal password
+- `action`: one of
+  - `stundenplan`
+  - `elternbriefe`
+  - `wer_macht_was`
+
 ## 📚 dependencies
 
 - NodeJS
@@ -17,8 +26,8 @@
     - remove whitespace, format html to simplify scraping
 
 ## 🚀 deployment
-- this script will be deployed as a serverless function with [ZEIT Now](https://zeit.co/) ☁️
-- the code to this function will be found in the `/api` folder 📁
+- this script is deployed as a serverless function on the url <https://elternportal-api.now.sh> with [ZEIT Now](https://zeit.co/) ☁️
+- the code to this function can be found in the `/api` folder 📁
 
 ## ❔ HOWTO: run this function without `ZEIT Now`
 ```
@@ -26,18 +35,20 @@ little heads up:
 normally, you would run this with `now dev` - as of Now CLI 16.7.3 dev (beta) this does not work with @now/node
 ```
 - `npm i` / `yarn install`
-- `node zombie.js`
+- `node server.js`
 
 ## 🛠️ how this works
-- STEP 01: get data from <https://mensadigital.de/LOGINPLAN.ASPX?P=FO111&E=herz>
-  - setup request
-    - enable cookies (`very important`)
-    - request method: POST (`very important`)
-    - enable followAllRedirects (`very important`)
-    - set login headers (`very important`)
-- STEP 02: parse the data
-- 
-- STEP 05 (`optional`): serve via express/ output to file
+- `server.js`
+  - STEP 01: start ExpressJS Server listening on port 80
+  - STEP 02: parse url parameters
+  - STEP 03: get data from server
+    - navigate to the target url (e.g. `/service/stundenplan`) with Zombie.js
+    - fill out login form + submit
+    - > at this point, the user is successfully logged in
+    - go 1 back in browser history, so we are at the target url again
+    - refresh the page so the browser updates the login state
+  - STEP 04: parse the data: Regex
+  - STEP 05: output to JSON
 
 ## 🛠️ development
 - rename `login-data.example.json` to `login-data.json`
