@@ -17,6 +17,12 @@
         <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('stundenplan')">Stundenplan</button>
         <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('elternbriefe')">Elternbriefe</button>
         <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('wer_macht_was')">Wer macht Was</button>
+        <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('schulaufgaben_plan')">Schulaufgaben</button>
+        <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('allgemeine_termine')">Allgemeine Termine</button>
+        <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('schulinformationen')">Schulinformationen</button>
+        <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('schwarzesbrett')">Schwarzes Brett</button>
+        <button class="btn btn-primary" style="visibility: hidden;" onclick="load_content('fundsachen')">Fundsachen</button>
+        <h2 id="current-title"></h2>
         <div class="container" id="content"></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
@@ -25,12 +31,14 @@
         $('.btn').css("visibility", "visible");
     });
     function load_content(type){
+        $("#current-title").html(`loading ${type}...`);
         $("#content").html(`loading ${type}...`);
         let server = $("#server").val();
         let port = $("#port").val();
         let username = encodeURIComponent($("#username").val());
         let password = encodeURIComponent($("#password").val());
-        $.get(`${server}:${port}/${type}?username=${username}&password=${password}`, function(data) {
+        $.get(`${server}:${port}/?action=${type}&username=${username}&password=${password}`, function(data) {
+            $("#current-title").html(data.title);
             $("#content").html(data.rendered);
         });
     }

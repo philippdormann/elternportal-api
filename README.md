@@ -6,12 +6,17 @@
 
 ## API usage
 - `https://elternportal-api.now.sh/?username=<username>&password=<password>&action=<action>`
-- `username`: Elternportal email
-- `password`: Elternportal password
+- `username`: Elternportal email (url encoded)
+- `password`: Elternportal password (url encoded)
 - `action`: one of
   - `stundenplan`
   - `elternbriefe`
   - `wer_macht_was`
+  - `schulaufgaben_plan`
+  - `allgemeine_termine`
+  - `schulinformationen`
+  - `schwarzesbrett`
+  - `fundsachen`
 
 ## 📚 dependencies
 

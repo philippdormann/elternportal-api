@@ -60,6 +60,34 @@ exports.Parsing_Interface = {
 			parsed = this.Parsing_Interface.parsers.base(html);
 			callback({ rendered: parsed, title: 'Wer macht Was' });
 		},
+		schulaufgaben_plan: (html, callback = () => {}) => {
+			parsed = this.Parsing_Interface.parsers.base(html);
+			let cheerio_2 = cheerio.load(parsed);
+			parsed = cheerio_2('.table2').html();
+			callback({ rendered: parsed, title: 'Schulaufgaben' });
+		},
+		allgemeine_termine: (html, callback = () => {}) => {
+			parsed = this.Parsing_Interface.parsers.base(html);
+			let cheerio_2 = cheerio.load(parsed);
+			parsed = cheerio_2('.table2').html();
+			callback({ rendered: parsed, title: 'Allgemeine Termine' });
+		},
+		schulinformationen: (html, callback = () => {}) => {
+			let cheerio_2 = cheerio.load(html);
+			parsed = cheerio_2('#asam_content').html();
+			callback({ rendered: parsed, title: 'Schulinformationen' });
+		},
+		schwarzesbrett: (html, callback = () => {}) => {
+			let cheerio_2 = cheerio.load(html);
+			parsed = cheerio_2('#asam_content').html();
+			parsed = parsed.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ''); //remove scripts
+			callback({ rendered: parsed, title: 'Schwarzes Brett' });
+		},
+		fundsachen: (html, callback = () => {}) => {
+			let cheerio_2 = cheerio.load(html);
+			parsed = cheerio_2('#asam_content').html();
+			callback({ rendered: parsed, title: 'Schwarzes Brett' });
+		},
 		base: (html) => {
 			console.log('parsing...');
 			let $ = cheerio.load(html);

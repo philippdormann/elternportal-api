@@ -47,6 +47,44 @@ exports.start_it_up = (req, res, action) => {
 				this.send_json_response(req, res, parsed);
 			});
 		});
+	} else if (action == 'schulaufgaben_plan') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie(
+			'service/termine/liste/schulaufgaben',
+			this.login_data,
+			(html) => {
+				this.gymh_ep.Parsing_Interface.parsers.schulaufgaben_plan(html, (parsed) => {
+					this.send_json_response(req, res, parsed);
+				});
+			}
+		);
+	}
+	else if (action == 'allgemeine_termine') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie('service/termine/liste/allgemein', this.login_data, (html) => {
+			this.gymh_ep.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
+				this.send_json_response(req, res, parsed);
+			});
+		});
+	}
+	else if (action == 'schulinformationen') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie('service/schulinformationen', this.login_data, (html) => {
+			this.gymh_ep.Parsing_Interface.parsers.schulinformationen(html, (parsed) => {
+				this.send_json_response(req, res, parsed);
+			});
+		});
+	}
+	else if (action == 'schwarzesbrett') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', this.login_data, (html) => {
+			this.gymh_ep.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
+				this.send_json_response(req, res, parsed);
+			});
+		});
+	}
+	else if (action == 'fundsachen') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie('suche/fundsachen', this.login_data, (html) => {
+			this.gymh_ep.Parsing_Interface.parsers.fundsachen(html, (parsed) => {
+				this.send_json_response(req, res, parsed);
+			});
+		});
 	}
 };
 exports.send_json_response = (req, res, content) => {
