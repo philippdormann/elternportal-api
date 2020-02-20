@@ -45,7 +45,7 @@ normally, you would run this with `now dev` - as of Now CLI 16.7.3 dev (beta) th
 
 ## 🛠️ how this works
 - `server.js`
-  - STEP 01: start ExpressJS Server listening on port 80
+  - STEP 01: start ExpressJS Server listening on port 3000
   - STEP 02: parse url parameters
   - STEP 03: get data from server
     - navigate to the target url (e.g. `/service/stundenplan`) with Zombie.js

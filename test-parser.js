@@ -1,10 +1,16 @@
 const fs = require('fs');
 const gymh = require('./api/gh-elternportal');
-// APP usage
-gymh.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
-const logindata = JSON.parse(fs.readFileSync('login-data.json', 'utf8'));
-gymh.Elternportal_Interface.init();
+let test_parse = (raw_file, action = () => {}) => {
+	fs.readFile(raw_file, { encoding: 'utf-8' }, function(err, data) {
+		if (!err) {
+			action(data);
+		} else {
+			console.log(err);
+		}
+	});
+};
 
+// APP usage
 // // --service/stundenplan
 // gymh.Elternportal_Interface.spawn_zombie('service/stundenplan', logindata, (html) => {
 // 	gymh.writeFile('raw/stundenplan.raw.html', html);
@@ -26,13 +32,17 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/wer_macht_was.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// --service/termine/liste/schulaufgaben
-// gymh.Elternportal_Interface.spawn_zombie('service/termine/liste/schulaufgaben', logindata, (html) => {
-// 	gymh.writeFile('raw/schulaufgaben_plan.raw.html', html);
-// 	gymh.Parsing_Interface.parsers.schulaufgaben_plan(html, (parsed) => {
+test_parse('./raw/schwarzesbrett.raw.html', (data) => {
+	gymh.Parsing_Interface.parsers.schwarzesbrett(data, (parsed) => {
+		gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
+	});
+});
+// test_parse('./raw/schulaufgaben_plan.raw.html', (data) => {
+// 	gymh.Parsing_Interface.parsers.schulaufgaben_plan(data, (parsed) => {
 // 		gymh.writeFile('parsed/schulaufgaben_plan.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
+
 // // --service/termine/liste/allgemein
 // gymh.Elternportal_Interface.spawn_zombie('service/termine/liste/allgemein', logindata, (html) => {
 // 	gymh.writeFile('raw/allgemeine_termine.raw.html', html);
@@ -47,13 +57,13 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/schulinformationen.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// --aktuelles/schwarzes_brett
-gymh.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', logindata, (html) => {
-	gymh.writeFile('raw/schwarzesbrett.raw.html', html);
-	// gymh.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
-	// 	gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
-	// });
-});
+// // --aktuelles/schwarzes_brett
+// gymh.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', logindata, (html) => {
+// 	gymh.writeFile('raw/schwarzesbrett.raw.html', html);
+// 	gymh.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
+// 		gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
 // // --suche/fundsachen
 // gymh.Elternportal_Interface.spawn_zombie('suche/fundsachen', logindata, (html) => {
 // 	gymh.writeFile('raw/fundsachen.raw.html', html);
