@@ -70,10 +70,17 @@ exports.Parsing_Interface = {
 			callback({ rendered: parsed, title: 'Wer macht Was' });
 		},
 		schulaufgaben_plan: (html, callback = () => {}) => {
-			parsed = this.Parsing_Interface.parsers.base(html);
-			let cheerio_2 = cheerio.load(parsed);
-			parsed = cheerio_2('.table2').html();
-			callback({ rendered: parsed, title: 'Schulaufgaben' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let schulaufgaben = [];
+			cheerio2('#asam_content > div:nth-child(3) > div > table > tbody > tr > [valign="top"]').each((i, elem) => {
+				let parent = cheerio2(elem).parent();
+				let current_schulaufgabe = {};
+				current_schulaufgabe.date = parent.children().eq(0).text();
+				current_schulaufgabe.title = parent.children().eq(2).text();
+				schulaufgaben.push(current_schulaufgabe);
+			});
+			callback(schulaufgaben);
 		},
 		allgemeine_termine: (html, callback = () => {}) => {
 			parsed = this.Parsing_Interface.parsers.base(html);
@@ -87,15 +94,38 @@ exports.Parsing_Interface = {
 			callback({ rendered: parsed, title: 'Schulinformationen' });
 		},
 		schwarzesbrett: (html, callback = () => {}) => {
-			let cheerio_2 = cheerio.load(html);
-			parsed = cheerio_2('#asam_content').html();
-			parsed = parsed.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ''); //remove scripts
-			callback({ rendered: parsed, title: 'Schwarzes Brett' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let letters = [];
+			cheerio2('#asam_content > div:nth-child(3) > div > div > div.grid-item > div').each((i, elem) => {
+				letters.push({
+					date: cheerio2(elem).children().eq(0).html(),
+					title: cheerio2(elem).children().eq(1).html(),
+					content: cheerio2(elem).children().eq(2).html()
+				});
+			});
+			cheerio2('#asam_content > div.arch > div > div').each((i, elem) => {
+				let title = cheerio2(elem).children().eq(0).children().eq(1).text();
+				let date = cheerio2(elem).children().eq(0).children().eq(0).text();
+				let content = cheerio2(elem).children().eq(1).children().eq(1).text();
+				let content_html = cheerio2(elem).children().eq(1).children().eq(1).html();
+				letters.push({
+					title: title,
+					date: date,
+					content: content,
+					content_html: content_html
+				});
+			});
+			callback({ letters: letters });
 		},
 		fundsachen: (html, callback = () => {}) => {
-			let cheerio_2 = cheerio.load(html);
-			parsed = cheerio_2('#asam_content').html();
-			callback({ rendered: parsed, title: 'Schwarzes Brett' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let fundsachen = [];
+			cheerio2('#asam_content > div:nth-child(3) > div > div > div > p').each((i, elem) => {
+				fundsachen.push({ name: cheerio2(elem).text() });
+			});
+			callback({ fundsachen: fundsachen });
 		},
 		base: (html) => {
 			console.log('parsing...');
