@@ -2,7 +2,7 @@ const fs = require('fs');
 const cheerio = require('cheerio');
 let minify = require('html-minifier').minify;
 
-fs.readFile('elternbriefe.raw.html', function(err, data) {
+fs.readFile('elternbriefe.raw.html', (err, data) => {
 	if (err) return console.error(err);
 	let parsed = GymH_Elternportal_Parsing_Interface.parsers.elternbriefe(data.toString());
 	log_it(parsed, 'elternbriefe.parsed.html');
@@ -57,7 +57,7 @@ let GymH_Elternportal_Parsing_Interface = {
 };
 
 let log_it = (data, file) => {
-	fs.writeFile(file, data, function(err) {
+	fs.writeFile(file, data, (err) => {
 		if (err) {
 			return console.log(err);
 		}

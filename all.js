@@ -61,3 +61,10 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/fundsachen.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
+// --get_kids
+gymh.Elternportal_Interface.spawn_zombie('start', logindata, (html) => {
+	gymh.writeFile('raw/kids.raw.html', html);
+	gymh.Parsing_Interface.parsers.get_kids(html, (parsed) => {
+		gymh.writeFile('parsed/kids.parsed.json', JSON.stringify(parsed));
+	});
+});

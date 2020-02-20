@@ -29,7 +29,13 @@ exports.set_params = (req, callback) => {
 };
 exports.start_it_up = (req, res, action) => {
 	this.gymh_ep.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
-	if (action == 'stundenplan') {
+	if (action == 'kids') {
+		this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
+			this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
+				this.send_json_response(req, res, parsed);
+			});
+		});
+	} else if (action == 'stundenplan') {
 		this.gymh_ep.Elternportal_Interface.spawn_zombie('service/stundenplan', this.login_data, (html) => {
 			this.gymh_ep.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
 				this.send_json_response(req, res, parsed);
@@ -57,29 +63,25 @@ exports.start_it_up = (req, res, action) => {
 				});
 			}
 		);
-	}
-	else if (action == 'allgemeine_termine') {
+	} else if (action == 'allgemeine_termine') {
 		this.gymh_ep.Elternportal_Interface.spawn_zombie('service/termine/liste/allgemein', this.login_data, (html) => {
 			this.gymh_ep.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
 				this.send_json_response(req, res, parsed);
 			});
 		});
-	}
-	else if (action == 'schulinformationen') {
+	} else if (action == 'schulinformationen') {
 		this.gymh_ep.Elternportal_Interface.spawn_zombie('service/schulinformationen', this.login_data, (html) => {
 			this.gymh_ep.Parsing_Interface.parsers.schulinformationen(html, (parsed) => {
 				this.send_json_response(req, res, parsed);
 			});
 		});
-	}
-	else if (action == 'schwarzesbrett') {
+	} else if (action == 'schwarzesbrett') {
 		this.gymh_ep.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', this.login_data, (html) => {
 			this.gymh_ep.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
 				this.send_json_response(req, res, parsed);
 			});
 		});
-	}
-	else if (action == 'fundsachen') {
+	} else if (action == 'fundsachen') {
 		this.gymh_ep.Elternportal_Interface.spawn_zombie('suche/fundsachen', this.login_data, (html) => {
 			this.gymh_ep.Parsing_Interface.parsers.fundsachen(html, (parsed) => {
 				this.send_json_response(req, res, parsed);

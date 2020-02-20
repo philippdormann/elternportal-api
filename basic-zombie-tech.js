@@ -2,7 +2,7 @@ const fs = require('fs');
 const Browser = require('zombie');
 const GymH_Login_Data = JSON.parse(fs.readFileSync('login-data.json', 'utf8'));
 
-Browser.visit('https://heraugy.eltern-portal.org/service/stundenplan', function(error, browser) {
+Browser.visit('https://heraugy.eltern-portal.org/service/stundenplan', (error, browser) => {
 	browser.fill('#inputEmail', GymH_Login_Data.username);
 	browser.fill('#inputPassword', GymH_Login_Data.password);
 	browser.document.forms[0].submit();
@@ -15,7 +15,7 @@ Browser.visit('https://heraugy.eltern-portal.org/service/stundenplan', function(
 
 		browser.back(() => {
 			browser.reload(() => {
-				fs.writeFile('zombie.html', browser.html(), function(err) {
+				fs.writeFile('zombie.html', browser.html(), (err) => {
 					if (err) {
 						return console.log(err);
 					}

@@ -9,6 +9,7 @@
 - `username`: Elternportal email (url encoded)
 - `password`: Elternportal password (url encoded)
 - `action`: one of
+  - `kids`
   - `stundenplan`
   - `elternbriefe`
   - `wer_macht_was`

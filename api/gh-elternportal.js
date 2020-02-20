@@ -13,7 +13,7 @@ exports.Elternportal_Interface = {
 		}
 	},
 	spawn_zombie: (url, logindata, callback) => {
-		Browser.visit(this.Elternportal_Interface.base_url + url, function(error, browser) {
+		Browser.visit(this.Elternportal_Interface.base_url + url, (error, browser) => {
 			browser.fill('#inputEmail', logindata.username);
 			browser.fill('#inputPassword', logindata.password);
 			browser.document.forms[0].submit();
@@ -44,6 +44,15 @@ exports.Parsing_Interface = {
 		removeScriptTypeAttributes: true
 	},
 	parsers: {
+		get_kids: (html, callback = () => {}) => {
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let kids = [];
+			cheerio2('.pupil-selector .form-group .form-control').each((i, elem) => {
+				kids.push({ name: cheerio2(elem).text(), id: cheerio2(elem).val() });
+			});
+			callback({ kids: kids });
+		},
 		stundenplan: (html, callback = () => {}) => {
 			parsed = this.Parsing_Interface.parsers.base(html);
 			let cheerio_2 = cheerio.load(parsed);
@@ -107,7 +116,7 @@ exports.Parsing_Interface = {
 	}
 };
 exports.writeFile = (file, content) => {
-	fs.writeFile(file, content, function(err) {
+	fs.writeFile(file, content, (err) => {
 		if (err) {
 			return console.log(err);
 		}
