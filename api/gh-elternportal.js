@@ -12,7 +12,7 @@ exports.Elternportal_Interface = {
 			fs.mkdirSync('./raw');
 		}
 	},
-	spawn_zombie: (url, logindata, callback) => {
+	spawn_zombie: (url, logindata, callback, kid = undefined) => {
 		Browser.visit(this.Elternportal_Interface.base_url + url, (error, browser) => {
 			browser.fill('#inputEmail', logindata.username);
 			browser.fill('#inputPassword', logindata.password);
@@ -23,6 +23,9 @@ exports.Elternportal_Interface = {
 				browser.back(() => {
 					// login page is still shown, reload to get the login corrected
 					browser.reload(() => {
+						// TODO: switch ChildID: this.Elternportal_Interface.base_url + origin/set_child.php?id=1373
+						if (kid != undefined) {
+						}
 						// this is the page we want
 						callback(browser.html());
 					});
