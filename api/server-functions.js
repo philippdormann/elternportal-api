@@ -29,12 +29,18 @@ exports.set_params = (req, callback) => {
 };
 exports.start_it_up = (req, res, action) => {
 	this.gymh_ep.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
-	if (action == 'kids') {
-		this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
-			this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
-				this.send_json_response_success(req, res, parsed);
+	if (action == 'kids' || action == 'add_kid') {
+		if (action == 'kids') {
+			this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
+				this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
+					this.send_json_response_success(req, res, parsed);
+				});
 			});
-		});
+		}
+		if (action == 'add_kid') {
+			// TODO:
+			this.send_json_response_success(req, res, 'kid_added');
+		}
 	} else {
 		if (req.query.kid == undefined || req.query.kid == '') {
 			this.send_json_response_error(req, res, 'no_kid_supplied');
