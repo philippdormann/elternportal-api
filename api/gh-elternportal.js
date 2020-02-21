@@ -65,8 +65,30 @@ exports.Parsing_Interface = {
 			callback({ rendered: parsed, title: table_title });
 		},
 		elternbriefe: (html, callback = () => {}) => {
-			parsed = this.Parsing_Interface.parsers.base(html);
-			callback({ rendered: parsed, title: 'Elternbriefe' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let elternbriefe = [];
+			let processed_ids = [];
+			cheerio2('#asam_content > table.table2.more_padding > tbody > tr > [valign="top"]').each((i, elem) => {
+				let parent = cheerio2(elem).parent();
+				let current_brief = {};
+				if (parent.children().eq(0).text().includes('#')) {
+					current_brief.id = parent.children().eq(0).text().replace('#', '');
+					if (!processed_ids.includes(current_brief.id)) {
+						let cheerio3 = cheerio.load(parent.children().eq(1).children().eq(0).html());
+						current_brief.title = cheerio3('h4').text();
+						cheerio3('h4').remove();
+						current_brief.date = cheerio3.text();
+						//
+						let cheerio4 = cheerio.load(parent.children().eq(1).html());
+						cheerio4('a').remove();
+						current_brief.content = cheerio4('body').html();
+						elternbriefe.push(current_brief);
+						processed_ids.push(current_brief.id);
+					}
+				}
+			});
+			callback({ elternbriefe: elternbriefe });
 		},
 		wer_macht_was: (html, callback = () => {}) => {
 			parsed = this.Parsing_Interface.parsers.base(html);
@@ -83,7 +105,7 @@ exports.Parsing_Interface = {
 				current_schulaufgabe.title = parent.children().eq(2).text();
 				schulaufgaben.push(current_schulaufgabe);
 			});
-			callback(schulaufgaben);
+			callback({ schulaufgaben: schulaufgaben });
 		},
 		allgemeine_termine: (html, callback = () => {}) => {
 			parsed = this.Parsing_Interface.parsers.base(html);

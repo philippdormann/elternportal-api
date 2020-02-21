@@ -12,13 +12,13 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// // --aktuelles/elternbriefe
-// gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (html) => {
-// 	gymh.writeFile('raw/elternbriefe.raw.html', html);
-// 	gymh.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
-// 		gymh.writeFile('parsed/elternbriefe.parsed.json', JSON.stringify(parsed));
-// 	});
-// });
+// --aktuelles/elternbriefe
+gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (html) => {
+	gymh.writeFile('raw/elternbriefe.raw.html', html);
+	gymh.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
+		gymh.writeFile('parsed/elternbriefe.parsed.json', JSON.stringify(parsed));
+	});
+});
 // // --service/wer_macht_was
 // gymh.Elternportal_Interface.spawn_zombie('service/wer_macht_was', logindata, (html) => {
 // 	gymh.writeFile('raw/wer_macht_was.raw.html', html);
@@ -47,13 +47,13 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/schulinformationen.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// --aktuelles/schwarzes_brett
-gymh.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', logindata, (html) => {
-	gymh.writeFile('raw/schwarzesbrett.raw.html', html);
-	// gymh.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
-	// 	gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
-	// });
-});
+// // --aktuelles/schwarzes_brett
+// gymh.Elternportal_Interface.spawn_zombie('aktuelles/schwarzes_brett', logindata, (html) => {
+// 	gymh.writeFile('raw/schwarzesbrett.raw.html', html);
+// 	// gymh.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
+// 	// 	gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
+// 	// });
+// });
 // // --suche/fundsachen
 // gymh.Elternportal_Interface.spawn_zombie('suche/fundsachen', logindata, (html) => {
 // 	gymh.writeFile('raw/fundsachen.raw.html', html);

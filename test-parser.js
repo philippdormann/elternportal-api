@@ -32,9 +32,14 @@ let test_parse = (raw_file, action = () => {}) => {
 // 		gymh.writeFile('parsed/wer_macht_was.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-test_parse('./raw/schwarzesbrett.raw.html', (data) => {
-	gymh.Parsing_Interface.parsers.schwarzesbrett(data, (parsed) => {
-		gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
+// test_parse('./raw/schwarzesbrett.raw.html', (data) => {
+// 	gymh.Parsing_Interface.parsers.schwarzesbrett(data, (parsed) => {
+// 		gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
+test_parse('./raw/elternbriefe.raw.html', (data) => {
+	gymh.Parsing_Interface.parsers.elternbriefe(data, (parsed) => {
+		gymh.writeFile('parsed/elternbriefe.parsed.json', JSON.stringify(parsed));
 	});
 });
 // test_parse('./raw/schulaufgaben_plan.raw.html', (data) => {
