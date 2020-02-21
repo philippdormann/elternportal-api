@@ -10,6 +10,7 @@
 - `username`: Elternportal email (url encoded)
 - `password`: Elternportal password (url encoded)
 - `action`: one of
+  - `check_auth`
   - `kids`
   - `stundenplan`
   - `elternbriefe`
@@ -33,6 +34,13 @@
 ```
 ```
 { "status": "fail", "code": "unknown_error" }
+```
+### 🔒 auth checks: action=check_auth
+```
+{ "status": "ok", "payload": "auth_valid" }
+```
+```
+{ "status": "ok", "payload": "auth_invalid" }
 ```
 ### ✅ successful actions
 - action=kids
