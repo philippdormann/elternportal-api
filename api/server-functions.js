@@ -36,7 +36,7 @@ exports.start_it_up = (req, res, action) => {
 		this.send_json_response_error(req, res, 'no_school_supplied');
 	} else {
 		this.gymh_ep.Elternportal_Interface.base_url = `https://${req.query.school}.eltern-portal.org/`;
-		if (action == 'kids' || action == 'add_kid') {
+		if (action == 'kids' || action == 'add_kid' || action == 'check_auth') {
 			if (action == 'kids') {
 				this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
 					this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
@@ -47,6 +47,16 @@ exports.start_it_up = (req, res, action) => {
 			if (action == 'add_kid') {
 				// TODO: implement add_kid
 				this.send_json_response_success(req, res, 'kid_added');
+			}
+			if (action == 'check_auth') {
+				this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
+					console.log(html);
+					if (html.includes('Willkommen')) {
+						this.send_json_response_success(req, res, 'auth_valid');
+					} else {
+						this.send_json_response_error(req, res, 'auth_invalid');
+					}
+				});
 			}
 		} else {
 			if (req.query.kid == undefined || req.query.kid == '') {
