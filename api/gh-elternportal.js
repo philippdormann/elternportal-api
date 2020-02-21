@@ -155,10 +155,11 @@ exports.Parsing_Interface = {
 			let cheerio2 = cheerio.load(html);
 			let wer_macht_was = [];
 			cheerio2('#asam_content > div.row > div > div.thumbnail > div.caption').each((i, elem) => {
-				let current_wmw = {};
-				current_wmw.title = cheerio2(elem).children().eq(0).remove('small').text();
-				current_wmw.description = cheerio2(elem).find('small').html();
-				current_wmw.people = [];
+				let current_wmw = {
+					title: cheerio2(elem).children().eq(0).html().replace(/ <small(?:.+)<\/small>/g, ''),
+					description: cheerio2(elem).find('small').text(),
+					people: []
+				};
 				for (let index = 0; index < cheerio2(elem).children().eq(1).children().length; index++) {
 					current_wmw.people.push(cheerio2(elem).children().eq(1).children().eq(index).text());
 				}
