@@ -50,7 +50,6 @@ exports.start_it_up = (req, res, action) => {
 			}
 			if (action == 'check_auth') {
 				this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
-					console.log(html);
 					if (html.includes('Willkommen')) {
 						this.send_json_response_success(req, res, 'auth_valid');
 					} else {
