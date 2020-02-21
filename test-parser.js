@@ -37,9 +37,14 @@ let test_parse = (raw_file, action = () => {}) => {
 // 		gymh.writeFile('parsed/schwarzesbrett.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-test_parse('./raw/allgemeine_termine.raw.html', (data) => {
-	gymh.Parsing_Interface.parsers.allgemeine_termine(data, (parsed) => {
-		gymh.writeFile('parsed/allgemeine_termine.parsed.json', JSON.stringify(parsed));
+// test_parse('./raw/allgemeine_termine.raw.html', (data) => {
+// 	gymh.Parsing_Interface.parsers.allgemeine_termine(data, (parsed) => {
+// 		gymh.writeFile('parsed/allgemeine_termine.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
+test_parse('./raw/stundenplan.raw.html', (data) => {
+	gymh.Parsing_Interface.parsers.stundenplan(data, (parsed) => {
+		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
 	});
 });
 // test_parse('./raw/elternbriefe.raw.html', (data) => {

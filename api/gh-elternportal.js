@@ -57,12 +57,73 @@ exports.Parsing_Interface = {
 			callback({ kids: kids });
 		},
 		stundenplan: (html, callback = () => {}) => {
-			parsed = this.Parsing_Interface.parsers.base(html);
-			let cheerio_2 = cheerio.load(parsed);
-			let table_title = cheerio_2('.table_header').html();
+			rendered_table = this.Parsing_Interface.parsers.base(html);
+			rendered_table = rendered_table.replace(/ align="center" valign="middle"/g, '');
+			rendered_table = rendered_table.replace(/ align="center"/g, '');
+			rendered_table = rendered_table.replace(/ width="15%"/g, '');
+			rendered_table = rendered_table.replace(/ width="17%"/g, '');
+			let cheerio2 = cheerio.load(html);
+			let table_title = cheerio2('.table_header').html();
 			table_title = table_title.replace(/<tbody><tr><td><h2>/g, '');
 			table_title = table_title.replace(/<\/h2><\/td><\/tr><\/tbody>/g, '');
-			callback({ rendered: parsed, title: table_title });
+			table_title = table_title.replace(/<img.*?src="(.*?)"[^\>]+>/g, '');
+			table_title = table_title.replace(/<span(?:.+)<\/span>/g, '');
+			let planArray = [];
+			let counter = 0;
+			cheerio2('#asam_content > div > table > tbody > tr').each((i, elem) => {
+				if (counter != 0) {
+					let current_brief = {};
+					// current_brief.stunde = cheerio2(elem).children().eq(0).html();
+					current_brief.stunde = {
+						count: cheerio2(elem).children().eq(0).html().split('<br>')[0],
+						description: cheerio2(elem).children().eq(0).html().split('<br>')[1]
+					};
+					current_brief.montag = {
+						fach: cheerio2(elem).children().eq(1).html().split('<br>')[0],
+						raum: cheerio2(elem).children().eq(1).html().split('<br>')[1]
+					};
+					current_brief.dienstag = {
+						fach: cheerio2(elem).children().eq(2).html().split('<br>')[0],
+						raum: cheerio2(elem).children().eq(2).html().split('<br>')[1]
+					};
+					current_brief.mittwoch = {
+						fach: cheerio2(elem).children().eq(3).html().split('<br>')[0],
+						raum: cheerio2(elem).children().eq(3).html().split('<br>')[1]
+					};
+					current_brief.donnerstag = {
+						fach: cheerio2(elem).children().eq(4).html().split('<br>')[0],
+						raum: cheerio2(elem).children().eq(4).html().split('<br>')[1]
+					};
+					current_brief.freitag = {
+						fach: cheerio2(elem).children().eq(5).html().split('<br>')[0],
+						raum: cheerio2(elem).children().eq(5).html().split('<br>')[1]
+					};
+					planArray.push(current_brief);
+				}
+				counter++;
+			});
+			planArray.forEach((elem) => {
+				elem.montag.fach = elem.montag.fach.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.montag.raum = elem.montag.raum.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.dienstag.fach = elem.dienstag.fach.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.dienstag.raum = elem.dienstag.raum.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.mittwoch.fach = elem.mittwoch.fach.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.mittwoch.raum = elem.mittwoch.raum.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.donnerstag.fach = elem.donnerstag.fach.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.donnerstag.raum = elem.donnerstag.raum.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.freitag.fach = elem.freitag.fach.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+				elem.freitag.raum = elem.freitag.raum.replace(/<span class>/g, '').replace(/ <\/span>/g, '');
+			});
+			callback({
+				stundenplan: {
+					title: table_title,
+					json: {
+						titles: [ '', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag' ],
+						rows: planArray
+					},
+					rendered_table: rendered_table
+				}
+			});
 		},
 		elternbriefe: (html, callback = () => {}) => {
 			html = minify(html, this.Parsing_Interface.minify_options);
@@ -167,14 +228,6 @@ exports.Parsing_Interface = {
 			$('.hidden-xs').remove();
 			parsed = $('#asam_content').html();
 			parsed = minify(parsed, this.Parsing_Interface.minify_options);
-			parsed = parsed.replace(/<!--[\s\S]*?-->/g, ''); //remove comments
-			parsed = parsed.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ''); //remove scripts
-			parsed = parsed.replace(/<img.*?src="(.*?)"[^\>]+>/g, ''); //remove img tags
-			parsed = parsed.replace(/ align="center" valign="middle"/g, '');
-			parsed = parsed.replace(/ align="center"/g, '');
-			parsed = parsed.replace(/ width="15%"/g, '');
-			parsed = parsed.replace(/ width="17%"/g, '');
-			parsed = parsed.replace(/ width="100%" border="0"/g, '');
 			return parsed;
 		}
 	}
