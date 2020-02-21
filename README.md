@@ -20,8 +20,8 @@
   - `schwarzesbrett`
   - `fundsachen`
 
-## API responses
-#### errors
+## 💬 API responses
+### ❌ errors
 ```
 { "status": "fail", "code": "no_kid_supplied" }
 ```
@@ -34,7 +34,7 @@
 ```
 { "status": "fail", "code": "unknown_error" }
 ```
-#### successful actions
+### ✅ successful actions
 - action=kids
 ```
 {
