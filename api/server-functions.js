@@ -28,89 +28,101 @@ exports.set_params = (req, callback) => {
 	}
 };
 exports.start_it_up = (req, res, action) => {
-	this.gymh_ep.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
-	if (action == 'kids' || action == 'add_kid') {
-		if (action == 'kids') {
-			this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
-				this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
-					this.send_json_response_success(req, res, parsed);
-				});
-			});
-		}
-		if (action == 'add_kid') {
-			// TODO:
-			this.send_json_response_success(req, res, 'kid_added');
-		}
+	if (decodeURI(req.query.school) == '' || decodeURI(req.query.school) == undefined) {
+		this.send_json_response_error(req, res, 'no_school_supplied');
 	} else {
-		if (req.query.kid == undefined || req.query.kid == '') {
-			this.send_json_response_error(req, res, 'no_kid_supplied');
+		this.gymh_ep.Elternportal_Interface.base_url = `https://${req.query.school}.eltern-portal.org/`;
+		if (action == 'kids' || action == 'add_kid') {
+			if (action == 'kids') {
+				this.gymh_ep.Elternportal_Interface.spawn_zombie('start', this.login_data, (html) => {
+					this.gymh_ep.Parsing_Interface.parsers.get_kids(html, (parsed) => {
+						this.send_json_response_success(req, res, parsed);
+					});
+				});
+			}
+			if (action == 'add_kid') {
+				// TODO: implement add_kid
+				this.send_json_response_success(req, res, 'kid_added');
+			}
 		} else {
-			if (action == 'stundenplan') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie('service/stundenplan', this.login_data, (html) => {
-					this.gymh_ep.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
-						this.send_json_response_success(req, res, parsed);
-					});
-				});
-			} else if (action == 'elternbriefe') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', this.login_data, (html) => {
-					this.gymh_ep.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
-						this.send_json_response_success(req, res, parsed);
-					});
-				});
-			} else if (action == 'wer_macht_was') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie('service/wer_macht_was', this.login_data, (html) => {
-					this.gymh_ep.Parsing_Interface.parsers.wer_macht_was(html, (parsed) => {
-						this.send_json_response_success(req, res, parsed);
-					});
-				});
-			} else if (action == 'schulaufgaben_plan') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie(
-					'service/termine/liste/schulaufgaben',
-					this.login_data,
-					(html) => {
-						this.gymh_ep.Parsing_Interface.parsers.schulaufgaben_plan(html, (parsed) => {
-							this.send_json_response_success(req, res, parsed);
-						});
-					}
-				);
-			} else if (action == 'allgemeine_termine') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie(
-					'service/termine/liste/allgemein',
-					this.login_data,
-					(html) => {
-						this.gymh_ep.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
-							this.send_json_response_success(req, res, parsed);
-						});
-					}
-				);
-			} else if (action == 'schulinformationen') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie(
-					'service/schulinformationen',
-					this.login_data,
-					(html) => {
-						this.gymh_ep.Parsing_Interface.parsers.schulinformationen(html, (parsed) => {
-							this.send_json_response_success(req, res, parsed);
-						});
-					}
-				);
-			} else if (action == 'schwarzesbrett') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie(
-					'aktuelles/schwarzes_brett',
-					this.login_data,
-					(html) => {
-						this.gymh_ep.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
-							this.send_json_response_success(req, res, parsed);
-						});
-					}
-				);
-			} else if (action == 'fundsachen') {
-				this.gymh_ep.Elternportal_Interface.spawn_zombie('suche/fundsachen', this.login_data, (html) => {
-					this.gymh_ep.Parsing_Interface.parsers.fundsachen(html, (parsed) => {
-						this.send_json_response_success(req, res, parsed);
-					});
-				});
+			if (req.query.kid == undefined || req.query.kid == '') {
+				this.send_json_response_error(req, res, 'no_kid_supplied');
 			} else {
-				this.send_json_response_error(req, res, 'unknown_action');
+				if (action == 'stundenplan') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie('service/stundenplan', this.login_data, (html) => {
+						this.gymh_ep.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
+							this.send_json_response_success(req, res, parsed);
+						});
+					});
+				} else if (action == 'elternbriefe') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'aktuelles/elternbriefe',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'wer_macht_was') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'service/wer_macht_was',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.wer_macht_was(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'schulaufgaben_plan') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'service/termine/liste/schulaufgaben',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.schulaufgaben_plan(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'allgemeine_termine') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'service/termine/liste/allgemein',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'schulinformationen') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'service/schulinformationen',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.schulinformationen(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'schwarzesbrett') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie(
+						'aktuelles/schwarzes_brett',
+						this.login_data,
+						(html) => {
+							this.gymh_ep.Parsing_Interface.parsers.schwarzesbrett(html, (parsed) => {
+								this.send_json_response_success(req, res, parsed);
+							});
+						}
+					);
+				} else if (action == 'fundsachen') {
+					this.gymh_ep.Elternportal_Interface.spawn_zombie('suche/fundsachen', this.login_data, (html) => {
+						this.gymh_ep.Parsing_Interface.parsers.fundsachen(html, (parsed) => {
+							this.send_json_response_success(req, res, parsed);
+						});
+					});
+				} else {
+					this.send_json_response_error(req, res, 'unknown_action');
+				}
 			}
 		}
 	}

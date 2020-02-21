@@ -5,7 +5,8 @@
 </pre>
 
 ## API usage
-- `https://elternportal-api.now.sh/?username=<username>&password=<password>&action=<action>`
+- `https://elternportal-api.now.sh/?school=<shortcode>username=<username>&password=<password>&action=<action>`
+- `shortcode`: short code of school institute (url encode when needed)
 - `username`: Elternportal email (url encoded)
 - `password`: Elternportal password (url encoded)
 - `action`: one of
