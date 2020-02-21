@@ -4,7 +4,7 @@ exports.navigate = (req, res, params) => {
 	if (params.status == 'ok') {
 		this.start_it_up(req, res, params.action);
 	} else {
-		this.send_json_response_success(req, res, { status: 'fail', rendered: '<h4>failed</h4>' });
+		this.send_json_response_success(req, res, { status: 'fail', code: 'unknown_error' });
 	}
 };
 exports.set_params = (req, callback) => {
@@ -28,7 +28,11 @@ exports.set_params = (req, callback) => {
 	}
 };
 exports.start_it_up = (req, res, action) => {
-	if (decodeURI(req.query.school) == '' || decodeURI(req.query.school) == undefined) {
+	if (
+		decodeURI(req.query.school) == '' ||
+		decodeURI(req.query.school) == undefined ||
+		decodeURI(req.query.school) == 'undefined'
+	) {
 		this.send_json_response_error(req, res, 'no_school_supplied');
 	} else {
 		this.gymh_ep.Elternportal_Interface.base_url = `https://${req.query.school}.eltern-portal.org/`;

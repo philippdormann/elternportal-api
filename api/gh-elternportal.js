@@ -196,9 +196,38 @@ exports.Parsing_Interface = {
 			callback({ allgemeine_termine: allgemeine_termine });
 		},
 		schulinformationen: (html, callback = () => {}) => {
-			let cheerio_2 = cheerio.load(html);
-			parsed = cheerio_2('#asam_content').html();
-			callback({ rendered: parsed, title: 'Schulinformationen' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let mode = 'infos';
+			let c = 0;
+			let info_list = [];
+			let lehrer_list = [];
+			cheerio2('#asam_content > div.m_bot').each((i, elem) => {
+				if (cheerio2(elem).eq(0).children().eq(1).text().includes('Stundenplankürzel der Lehrkräfte')) {
+					c == 0;
+					mode = 'lehrer';
+				}
+				if (c > 0) {
+					if (mode == 'infos') {
+						info_list.push({
+							key: cheerio2(elem).eq(0).children().eq(0).children().eq(0).text(),
+							value: cheerio2(elem).eq(0).children().eq(1).html()
+						});
+					}
+					if (mode == 'lehrer') {
+						if (
+							!cheerio2(elem).eq(0).children().eq(1).text().includes('Stundenplankürzel der Lehrkräfte')
+						) {
+							lehrer_list.push({
+								key: cheerio2(elem).eq(0).children().eq(0).children().eq(0).text(),
+								value: cheerio2(elem).eq(0).children().eq(1).text()
+							});
+						}
+					}
+				}
+				c++;
+			});
+			callback({ info_list: info_list, lehrer_list: lehrer_list });
 		},
 		schwarzesbrett: (html, callback = () => {}) => {
 			html = minify(html, this.Parsing_Interface.minify_options);

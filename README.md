@@ -20,6 +20,223 @@
   - `schwarzesbrett`
   - `fundsachen`
 
+## API responses
+#### errors
+```
+{ "status": "fail", "code": "no_kid_supplied" }
+```
+```
+{ "status": "fail", "code": "no_school_supplied" }
+```
+```
+{ "status": "fail", "code": "unknown_action" }
+```
+```
+{ "status": "fail", "code": "unknown_error" }
+```
+#### successful actions
+- action=kids
+```
+{
+  "status": "ok",
+  "payload": {
+    "kids": [
+      {
+        "name": "<VORNAME> <NACHNAME> (<KLASSE>)",
+        "id": "<ID>"
+      }
+    ]
+  }
+}
+```
+-  action=stundenplan
+```
+{
+	"status": "ok",
+	"payload": {
+		"stundenplan": {
+			"title": "Stundenplan der Klasse <KLASSE>",
+			"json": {
+				"titles": [ "", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" ],
+				"rows": [
+					{
+						"stunde": { "count": "1", "description": "08.00 - 08.45" },
+						"montag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"dienstag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"mittwoch": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"donnerstag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"freitag": { "fach": "<FACH>", "raum": "<RAUM>" }
+					},
+					{
+						"stunde": { "count": "2", "description": "08.45 - 09.30" },
+						"montag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"dienstag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"mittwoch": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"donnerstag": { "fach": "<FACH>", "raum": "<RAUM>" },
+						"freitag": { "fach": "<FACH>", "raum": "<RAUM>" }
+					}
+				]
+			},
+			"rendered_table": "<RENDERED_TABLE>"
+		}
+	}
+}
+```
+-  action=elternbriefe
+```
+{
+  "status": "ok",
+  "payload": {
+    "elternbriefe": [
+      {
+        "id": "<ID>",
+        "title": "<TITLE>",
+        "date": "<SENT-DATE>",
+        "content": "<HTML-CONTENT>"
+      },
+      {
+        "id": "<ID>",
+        "title": "<TITLE>",
+        "date": "<SENT-DATE>",
+        "content": "<HTML-CONTENT>"
+      }
+    ]
+  }
+}
+```
+-  action=wer_macht_was
+```
+{
+  "status": "ok",
+  "payload": {
+    "wer_macht_was": [
+      {
+        "title": "<TITLE>",
+        "description": "<DESCRIPTION>",
+        "people": [
+          "Max Mustermann"
+        ]
+      },
+      {
+        "title": "<TITLE>",
+        "description": "<DESCRIPTION>",
+        "people": [
+          "Max Mustermann",
+          "Erika Mustermann"
+        ]
+      }
+    ]
+  }
+}
+```
+-  action=schulaufgaben_plan
+```
+{
+  "status": "ok",
+  "payload": {
+    "schulaufgaben": [
+      {
+        "date": "<DATE>",
+        "time": " ",
+        "title": "<TITEL DER ARBEIT> (<LEHRER-SHORT>)"
+      },
+      {
+        "date": "<DATE>",
+        "time": " ",
+        "title": "<TITEL DER ARBEIT> (<LEHRER-SHORT>)"
+      }
+    ]
+  }
+}
+```
+-  action=allgemeine_termine
+```
+{
+  "status": "ok",
+  "payload": {
+    "allgemeine_termine": [
+      {
+        "date": "DD.MM.YYYY - DD.MM.YYYY",
+        "time": "HH:ii - HH:ii",
+        "title": "<TITLE>"
+      },
+      {
+        "date": "DD.MM.YYYY - DD.MM.YYYY",
+        "time": "HH:ii - HH:ii",
+        "title": "<TITLE>"
+      }
+    ]
+  }
+}
+```
+-  action=schulinformationen
+```
+{
+  "status": "ok",
+  "payload": {
+    "info_list": [
+      {
+        "key": "<KEY>",
+        "value": "<VALUE>"
+      },
+      {
+        "key": "<KEY>",
+        "value": "<VALUE>"
+      }
+    ],
+    "lehrer_list": [
+      {
+        "key": "<LEHRER-SHORT>",
+        "value": "<LEHRER-LONG>"
+      },
+      {
+        "key": "<LEHRER-SHORT>",
+        "value": "<LEHRER-LONG>"
+      }
+    ]
+  }
+}
+```
+-  action=schwarzesbrett
+```
+{
+  "status": "ok",
+  "payload": {
+    "letters": [
+      {
+        "title": "<TITLE>",
+        "date": "<DATE>",
+        "content": "<CONTENT>",
+        "content_html": "<HTML-CONTENT>"
+      },
+      {
+        "title": "<TITLE>",
+        "date": "<DATE>",
+        "content": "<CONTENT>",
+        "content_html": "<HTML-CONTENT>"
+      }
+    ]
+  }
+}
+```
+-  action=fundsachen
+```
+{
+  "status": "ok",
+  "payload": {
+    "fundsachen": [
+      {
+        "name": "<ITEM-NAME>"
+      },
+      {
+        "name": "<ITEM-NAME>"
+      }
+    ]
+  }
+}
+```
+
+
 ## 📚 dependencies
 
 - NodeJS
