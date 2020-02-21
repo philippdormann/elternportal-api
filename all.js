@@ -12,13 +12,13 @@ gymh.Elternportal_Interface.init();
 // 		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// --aktuelles/elternbriefe
-gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (html) => {
-	gymh.writeFile('raw/elternbriefe.raw.html', html);
-	gymh.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
-		gymh.writeFile('parsed/elternbriefe.parsed.json', JSON.stringify(parsed));
-	});
-});
+// // --aktuelles/elternbriefe
+// gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (html) => {
+// 	gymh.writeFile('raw/elternbriefe.raw.html', html);
+// 	gymh.Parsing_Interface.parsers.elternbriefe(html, (parsed) => {
+// 		gymh.writeFile('parsed/elternbriefe.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
 // // --service/wer_macht_was
 // gymh.Elternportal_Interface.spawn_zombie('service/wer_macht_was', logindata, (html) => {
 // 	gymh.writeFile('raw/wer_macht_was.raw.html', html);
@@ -33,13 +33,13 @@ gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (h
 // 		gymh.writeFile('parsed/schulaufgaben_plan.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-// // --service/termine/liste/allgemein
-// gymh.Elternportal_Interface.spawn_zombie('service/termine/liste/allgemein', logindata, (html) => {
-// 	gymh.writeFile('raw/allgemeine_termine.raw.html', html);
-// 	gymh.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
-// 		gymh.writeFile('parsed/allgemeine_termine.parsed.json', JSON.stringify(parsed));
-// 	});
-// });
+// --service/termine/liste/allgemein
+gymh.Elternportal_Interface.spawn_zombie('service/termine/liste/allgemein', logindata, (html) => {
+	gymh.writeFile('raw/allgemeine_termine.raw.html', html);
+	gymh.Parsing_Interface.parsers.allgemeine_termine(html, (parsed) => {
+		gymh.writeFile('parsed/allgemeine_termine.parsed.json', JSON.stringify(parsed));
+	});
+});
 // // --service/schulinformationen
 // gymh.Elternportal_Interface.spawn_zombie('service/schulinformationen', logindata, (html) => {
 // 	gymh.writeFile('raw/schulinformationen.raw.html', html);

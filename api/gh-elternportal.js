@@ -102,16 +102,25 @@ exports.Parsing_Interface = {
 				let parent = cheerio2(elem).parent();
 				let current_schulaufgabe = {};
 				current_schulaufgabe.date = parent.children().eq(0).text();
+				current_schulaufgabe.time = parent.children().eq(1).text();
 				current_schulaufgabe.title = parent.children().eq(2).text();
 				schulaufgaben.push(current_schulaufgabe);
 			});
 			callback({ schulaufgaben: schulaufgaben });
 		},
 		allgemeine_termine: (html, callback = () => {}) => {
-			parsed = this.Parsing_Interface.parsers.base(html);
-			let cheerio_2 = cheerio.load(parsed);
-			parsed = cheerio_2('.table2').html();
-			callback({ rendered: parsed, title: 'Allgemeine Termine' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let allgemeine_termine = [];
+			cheerio2('#asam_content > div:nth-child(3) > div > table > tbody > tr > [valign="top"]').each((i, elem) => {
+				let parent = cheerio2(elem).parent();
+				let termin = {};
+				termin.date = parent.children().eq(0).text();
+				termin.time = parent.children().eq(1).text();
+				termin.title = parent.children().eq(2).text();
+				allgemeine_termine.push(termin);
+			});
+			callback({ allgemeine_termine: allgemeine_termine });
 		},
 		schulinformationen: (html, callback = () => {}) => {
 			let cheerio_2 = cheerio.load(html);
