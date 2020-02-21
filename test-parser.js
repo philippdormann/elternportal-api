@@ -42,9 +42,14 @@ let test_parse = (raw_file, action = () => {}) => {
 // 		gymh.writeFile('parsed/allgemeine_termine.parsed.json', JSON.stringify(parsed));
 // 	});
 // });
-test_parse('./raw/stundenplan.raw.html', (data) => {
-	gymh.Parsing_Interface.parsers.stundenplan(data, (parsed) => {
-		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
+// test_parse('./raw/stundenplan.raw.html', (data) => {
+// 	gymh.Parsing_Interface.parsers.stundenplan(data, (parsed) => {
+// 		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
+test_parse('./raw/wer_macht_was.raw.html', (data) => {
+	gymh.Parsing_Interface.parsers.wer_macht_was(data, (parsed) => {
+		gymh.writeFile('parsed/wer_macht_was.parsed.json', JSON.stringify(parsed));
 	});
 });
 // test_parse('./raw/elternbriefe.raw.html', (data) => {

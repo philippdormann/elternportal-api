@@ -5,13 +5,13 @@ gymh.Elternportal_Interface.base_url = 'https://heraugy.eltern-portal.org/';
 const logindata = JSON.parse(fs.readFileSync('login-data.json', 'utf8'));
 gymh.Elternportal_Interface.init();
 
-// --service/stundenplan
-gymh.Elternportal_Interface.spawn_zombie('service/stundenplan', logindata, (html) => {
-	gymh.writeFile('raw/stundenplan.raw.html', html);
-	gymh.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
-		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
-	});
-});
+// // --service/stundenplan
+// gymh.Elternportal_Interface.spawn_zombie('service/stundenplan', logindata, (html) => {
+// 	gymh.writeFile('raw/stundenplan.raw.html', html);
+// 	gymh.Parsing_Interface.parsers.stundenplan(html, (parsed) => {
+// 		gymh.writeFile('parsed/stundenplan.parsed.json', JSON.stringify(parsed));
+// 	});
+// });
 // // --aktuelles/elternbriefe
 // gymh.Elternportal_Interface.spawn_zombie('aktuelles/elternbriefe', logindata, (html) => {
 // 	gymh.writeFile('raw/elternbriefe.raw.html', html);

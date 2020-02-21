@@ -73,7 +73,6 @@ exports.Parsing_Interface = {
 			cheerio2('#asam_content > div > table > tbody > tr').each((i, elem) => {
 				if (counter != 0) {
 					let current_brief = {};
-					// current_brief.stunde = cheerio2(elem).children().eq(0).html();
 					current_brief.stunde = {
 						count: cheerio2(elem).children().eq(0).html().split('<br>')[0],
 						description: cheerio2(elem).children().eq(0).html().split('<br>')[1]
@@ -152,8 +151,20 @@ exports.Parsing_Interface = {
 			callback({ elternbriefe: elternbriefe });
 		},
 		wer_macht_was: (html, callback = () => {}) => {
-			parsed = this.Parsing_Interface.parsers.base(html);
-			callback({ rendered: parsed, title: 'Wer macht Was' });
+			html = minify(html, this.Parsing_Interface.minify_options);
+			let cheerio2 = cheerio.load(html);
+			let wer_macht_was = [];
+			cheerio2('#asam_content > div.row > div > div.thumbnail > div.caption').each((i, elem) => {
+				let current_wmw = {};
+				current_wmw.title = cheerio2(elem).children().eq(0).remove('small').text();
+				current_wmw.description = cheerio2(elem).find('small').html();
+				current_wmw.people = [];
+				for (let index = 0; index < cheerio2(elem).children().eq(1).children().length; index++) {
+					current_wmw.people.push(cheerio2(elem).children().eq(1).children().eq(index).text());
+				}
+				wer_macht_was.push(current_wmw);
+			});
+			callback({ wer_macht_was: wer_macht_was });
 		},
 		schulaufgaben_plan: (html, callback = () => {}) => {
 			html = minify(html, this.Parsing_Interface.minify_options);
@@ -225,7 +236,6 @@ exports.Parsing_Interface = {
 		base: (html) => {
 			console.log('parsing...');
 			let $ = cheerio.load(html);
-			$('.hidden-xs').remove();
 			parsed = $('#asam_content').html();
 			parsed = minify(parsed, this.Parsing_Interface.minify_options);
 			return parsed;
