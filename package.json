@@ -4,12 +4,16 @@
 	"license": "MIT",
 	"description": "unofficial art soft and more Elternportal-API",
 	"scripts": {
+		"dev": "nodemon server.js",
 		"start": "node server.js"
 	},
 	"dependencies": {
-		"cheerio": "1.0.0-rc.3",
+		"cheerio": "1.0.0-rc.10",
 		"express": "4.17.1",
 		"html-minifier": "4.0.0",
 		"zombie": "6.1.4"
+	},
+	"devDependencies": {
+		"nodemon": "2.0.9"
 	}
 }
