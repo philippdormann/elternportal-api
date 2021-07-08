@@ -1,8 +1,8 @@
 {
-	"name": "gymh-elternportal",
-	"version": "1.0.0",
+	"name": "@gymh/elternportal-api",
+	"version": "1.0.1",
 	"license": "MIT",
-	"description": "GymH-Elternportal",
+	"description": "unofficial art soft and more Elternportal-API",
 	"scripts": {
 		"start": "node server.js"
 	},
