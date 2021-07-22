@@ -20,9 +20,9 @@
   
 ## 👉 Sample API calls
 ### get your kids
-- https://elternportal-api.vercel.app/?school=*{shortcode}*&username=*{username}*&password=*{password}*&action=kids
+- https://elternportal-api.vercel.app/?school={shortcode}&username={username}&password={password}&action=kids
 ### stundenplan of kid #{ID}
-- https://elternportal-api.vercel.app/?school=*{shortcode}*&username=*{username}*&password=*{password}*&action=stundenplan&kid=*{ID}*
+- https://elternportal-api.vercel.app/?school={shortcode}&username={username}&password={password}&action=stundenplan&kid={ID}
 
 ## 💬 API responses
 ### ❌ errors
