@@ -2,7 +2,7 @@
 🔌 unofficial APIs for connecting to `*.eltern-portal.org` URLs/ infoportal by art soft and more GmbH
 
 ## API usage
-- `https://elternportal-api.vercel.app/?school=<shortcode>&username=<username>&password=<password>&action=<action>`
+- `https://elternportal-api.vercel.app/api/?school=<shortcode>&username=<username>&password=<password>&action=<action>`
 - `shortcode`: short code of school institute (url encode when needed)
 - `username`: Elternportal email (url encoded)
 - `password`: Elternportal password (url encoded)
@@ -20,9 +20,9 @@
   
 ## 👉 Sample API calls
 ### get your kids
-- https://elternportal-api.vercel.app/?school={shortcode}&username={username}&password={password}&action=kids
+- https://elternportal-api.vercel.app/api/?school={shortcode}&username={username}&password={password}&action=kids
 ### stundenplan of kid #{ID}
-- https://elternportal-api.vercel.app/?school={shortcode}&username={username}&password={password}&action=stundenplan&kid={ID}
+- https://elternportal-api.vercel.app/api/?school={shortcode}&username={username}&password={password}&action=stundenplan&kid={ID}
 
 ## 💬 API responses
 ### ❌ errors

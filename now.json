@@ -4,13 +4,6 @@
 	"redirects": [
 		{
 		  "source": "/",
-		  "has": [
-			{
-			  "type": "header",
-			  "key": "user-agent",
-			  "value": "Go-http-client/1.1"
-			}
-		  ],
 		  "destination": "https://youtube.com/watch?v=dQw4w9WgXcQ",
 		  "permanent": false
 		}
