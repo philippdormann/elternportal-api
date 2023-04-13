@@ -151,4 +151,23 @@ async function getElternbriefe({ short = "", username = "", password = "" }) {
     }
     return briefe;
 }
-export { getElternbriefe, getKids, getSchoolInfos, getTermine, getFundsachen }
+async function getFile({ file = "", short = "", username = "", password = "" }) {
+    const csrf = await loadCSRF({ short });
+    await client.request({
+        method: 'POST',
+        url: `https://${short}.eltern-portal.org/includes/project/auth/login.php`,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            csrf,
+            username,
+            password,
+            go_to: 'aktuelles/elternbriefe'
+        }
+    })
+    // const res = await client.get(`https://${short}.eltern-portal.org/aktuelles/get_file/?repo=${file}&csrf=${csrf}`, { responseType: 'arraybuffer' });
+    // writeFileSync("./out.pdf", res.data);
+    return {};
+}
+export { getElternbriefe, getKids, getSchoolInfos, getTermine, getFundsachen, getFile }
