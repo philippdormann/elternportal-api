@@ -1,7 +1,8 @@
-const cheerio = require('cheerio');
-const axios = require('axios').default;
-const { wrapper } = require('axios-cookiejar-support');
-const { CookieJar } = require('tough-cookie');
+import * as cheerio from "cheerio"
+import axios from "axios"
+import { wrapper } from "axios-cookiejar-support"
+import { CookieJar } from "tough-cookie";
+// 
 const jar = new CookieJar();
 const client = wrapper(axios.create({ jar }));
 // =========
@@ -12,7 +13,7 @@ async function loadCSRF({ short = "" }) {
         method: 'GET',
         url: `https://${short}.eltern-portal.org/`
     })
-    let $ = cheerio.load(data);
+    const $ = cheerio.load(data);
     csrf = $(`[name='csrf']`).val();
     return csrf;
 }
@@ -31,7 +32,7 @@ async function getKids({ short = "", username = "", password = "" }) {
             go_to: ''
         }
     })
-    $ = cheerio.load(data);
+    const $ = cheerio.load(data);
     const kids = [{ name: $(`.pupil-selector select option`).text().replace(/^\s+|\s+$/g, ''), id: $(`.pupil-selector select option`).val() }]
     return kids;
 }
@@ -50,7 +51,7 @@ async function getSchoolInfos({ short = "", username = "", password = "" }) {
             go_to: 'service/schulinformationen'
         }
     })
-    $ = cheerio.load(data);
+    const $ = cheerio.load(data);
     $("table").remove();
     $(".hidden-lg").remove();
     let infos = $("#asam_content").html().replaceAll(`\n`, "<br>");
@@ -100,7 +101,7 @@ async function getFundsachen({ short = "", username = "", password = "" }) {
             go_to: 'suche/fundsachen'
         }
     })
-    $ = cheerio.load(data);
+    const $ = cheerio.load(data);
     $("table").remove();
     $(".hidden-lg").remove();
     let fundsachen = $("#asam_content").html().replaceAll(`\n`, "<br>");
@@ -124,7 +125,7 @@ async function getElternbriefe({ short = "", username = "", password = "" }) {
             go_to: 'aktuelles/elternbriefe'
         }
     })
-    $ = cheerio.load(data);
+    const $ = cheerio.load(data);
     $(".hidden-lg").remove();
     let tmp = $('tr').get().map(ele => {
         if ($(ele).find('td:first').html().includes("<h4>")) {
