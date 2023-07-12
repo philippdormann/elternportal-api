@@ -152,9 +152,14 @@ async function getElternbriefe({ short = "", username = "", password = "" }) {
                 info: $(ele).find('td:last').text()
             }
         }
+        const statusOriginal = $(ele).find('td:last').html();
+        let status = "read";
+        if (statusOriginal.includes("noch nicht")) {
+            status = "unread";
+        }
         return {
             id: $(ele).find('td:first').html(),
-            status: $(ele).find('td:last').html()
+            status
         }
     })
     let briefe = [];
