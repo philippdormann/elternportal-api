@@ -107,7 +107,7 @@ async function getFundsachen({ short = "", username = "", password = "" }) {
     let fundsachen = $("#asam_content").html().replaceAll(`\n`, "<br>");
     fundsachen = cheerio.load(fundsachen)('.row').get().map(ele => {
         return $(ele).find('.caption').text()
-    })
+    }).filter(f => f.trim())
     return fundsachen;
 }
 async function getElternbriefe({ short = "", username = "", password = "" }) {
