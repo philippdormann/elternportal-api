@@ -83,7 +83,18 @@ async function getTermine({ short = "", username = "", password = "", from, to }
         url: `https://${short}.eltern-portal.org/api/ws_get_termine.php`,
         params: { from, to, utc_offset: '-120' }
     })
-    if (data.success === 1) return data.result;
+    if (data.success === 1) {
+        data.result = data.result.map(t => {
+            t.title = t.title.replaceAll("<br />", "<br>").replaceAll("<br>", "\n");
+            t.title_short = t.title_short.replaceAll("<br />", "<br>").replaceAll("<br>", "\n");
+            t.start = parseInt(t.start);
+            t.end = parseInt(t.end);
+            t.bo_end = parseInt(t.bo_end);
+            t.id = parseInt(t.id.replace("id_", ""));
+            return t;
+        })
+        return data.result;
+    }
     return [];
 }
 async function getFundsachen({ short = "", username = "", password = "" }) {
