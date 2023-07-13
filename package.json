@@ -1,17 +1,31 @@
 {
-	"name": "@philippdormann/elternportal-api",
-	"version": "2.0.1",
-	"license": "MIT",
-	"type": "module",
-	"files": [
-		"./fetcher.js"
-	],
-	"main": "fetcher.js",
-	"description": "unofficial art soft and more Elternportal-API",
-	"dependencies": {
-		"axios": "1.4.0",
-		"axios-cookiejar-support": "4.0.7",
-		"cheerio": "1.0.0-rc.12",
-		"tough-cookie": "4.1.3"
-	}
+  "name": "@philippdormann/elternportal-api",
+  "version": "2.0.1",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "unbuild"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "description": "unofficial art soft and more Elternportal-API",
+  "dependencies": {
+    "axios": "1.4.0",
+    "axios-cookiejar-support": "4.0.7",
+    "cheerio": "1.0.0-rc.12",
+    "tough-cookie": "4.1.3"
+  },
+  "devDependencies": {
+    "@types/tough-cookie": "4.0.2",
+    "esno": "0.17.0",
+    "unbuild": "1.2.1"
+  }
 }
