@@ -7,12 +7,13 @@ pnpm i @philippdormann/elternportal-api
 ```
 ## Usage
 ```js
-import { getFile } from "@philippdormann/elternportal-api";
+import { getElternportalClient } from "@philippdormann/elternportal-api";
 
-const kids = await getKids({
-    short: "",
-    "username": "",
-    "password": ""
+const client = await getElternportalClient({
+  short: "heraugy",
+  username: "",
+  password: "",
 });
-console.log(kids);
+const letters = await client.getElternbriefe();
+console.log(letters);
 ```
