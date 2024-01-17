@@ -23,6 +23,10 @@
     "cheerio": "1.0.0-rc.12",
     "tough-cookie": "4.1.3"
   },
+  "files": [
+    "./package.json",
+    "./dist"
+  ],
   "devDependencies": {
     "@types/tough-cookie": "4.0.2",
     "esno": "0.17.0",
