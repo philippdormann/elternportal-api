@@ -113,10 +113,19 @@ class ElternPortalApiClient {
         go_to: "service/termine",
       },
     });
+    const utc_offset = new Date().getTimezoneOffset();
+    let param__from = parseInt(from)
+    if (`${from.length}`.length !== 13) {
+      param__from = parseInt(`${param__from}`.padEnd(13, "0"))
+    }
+    let param__to = parseInt(to)
+    if (`${to.length}`.length !== 13) {
+      param__to = parseInt(`${param__to}`.padEnd(13, "0"))
+    }
     const { data } = await this.client.request({
       method: "GET",
       url: `https://${this.short}.eltern-portal.org/api/ws_get_termine.php`,
-      params: { from, to, utc_offset: "-120" },
+      params: { from: param__from, to: param__to, utc_offset },
     });
     if (data.success === 1) {
       data.result = data.result.map((t: any) => {
@@ -130,6 +139,16 @@ class ElternPortalApiClient {
         t.id = parseInt(t.id.replace("id_", ""));
         return t;
       });
+      if (param__from !== 0) {
+        data.result = data.result.filter((t: any) =>
+          t.start >= param__from
+        )
+      }
+      if (param__to !== 0) {
+        data.result = data.result.filter((t: any) =>
+          t.end <= param__to
+        )
+      }
       return data.result;
     }
     return [];
