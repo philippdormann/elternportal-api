@@ -88,7 +88,7 @@ class ElternPortalApiClient {
     const $ = cheerioLoad(data);
     $("table").remove();
     $(".hidden-lg").remove();
-    let infos = ($("#asam_content").html() as string).replaceAll(`\n`, "<br>");
+    let infos = ($("#asam_content").html() as string) || "".replaceAll(`\n`, "<br>");
     const schoolInfos = cheerioLoad(infos)(".row")
       .get()
       .map((ele) => {
