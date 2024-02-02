@@ -153,6 +153,51 @@ class ElternPortalApiClient {
     }
     return [];
   }
+  async getStundenplan() {
+    const { data } = await this.client.request({
+      method: "POST",
+      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        csrf: this.csrf,
+        username: this.username,
+        password: this.password,
+        go_to: "service/stundenplan",
+      },
+    });
+    const tmp = cheerioLoad(data)("#asam_content > div > table > tbody tr td").get()
+    // @ts-ignore
+    let rows = [];
+    let std = 0
+    tmp.forEach((r) => {
+      const rowsDOM = cheerioLoad(r)("td").get();
+      // @ts-ignore
+      let cols = [];
+      rowsDOM.forEach((t) => {
+        const rowHTML = cheerioLoad(t).html();
+        if (rowHTML.includes('width="15%"')) {
+          const arr1 = (rowHTML || "").split("<br>");
+          const value = parseInt((arr1[0] || "").split(">")[1].replace(".", ""));
+          std = value;
+          // const value = std
+          const detail = (arr1[1] || "").split("<")[0].replaceAll(".", ":");
+          cols.push({ type: "info", value, detail, std });
+        } else {
+          const arr1 = (rowHTML || "").split("<br>");
+          const value = (arr1[0] || "").split('<span class="">')[1];
+          const detail = (arr1[1] || "").split(" </span>")[0];
+          cols.push({ type: "class", value, detail, std });
+        }
+        // std++
+      });
+      // @ts-ignore
+      rows.push(cols);
+    });
+    // @ts-ignore
+    return rows;
+  }
   async getFundsachen(): Promise<string[]> {
     const { data } = await this.client.request({
       method: "POST",
