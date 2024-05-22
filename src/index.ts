@@ -1,7 +1,8 @@
 import { load as cheerioLoad } from "cheerio";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
+import { Cookie, CookieJar } from "tough-cookie";
+
 //
 type Kid = {
   name: string;
@@ -88,7 +89,8 @@ class ElternPortalApiClient {
     const $ = cheerioLoad(data);
     $("table").remove();
     $(".hidden-lg").remove();
-    let infos = ($("#asam_content").html() as string) || "".replaceAll(`\n`, "<br>");
+    let infos =
+      ($("#asam_content").html() as string) || "".replaceAll(`\n`, "<br>");
     const schoolInfos = cheerioLoad(infos)(".row")
       .get()
       .map((ele) => {
@@ -114,13 +116,13 @@ class ElternPortalApiClient {
       },
     });
     const utc_offset = new Date().getTimezoneOffset();
-    let param__from = parseInt(from)
+    let param__from = parseInt(from);
     if (`${from.length}`.length !== 13) {
-      param__from = parseInt(`${param__from}`.padEnd(13, "0"))
+      param__from = parseInt(`${param__from}`.padEnd(13, "0"));
     }
-    let param__to = parseInt(to)
+    let param__to = parseInt(to);
     if (`${to.length}`.length !== 13) {
-      param__to = parseInt(`${param__to}`.padEnd(13, "0"))
+      param__to = parseInt(`${param__to}`.padEnd(13, "0"));
     }
     const { data } = await this.client.request({
       method: "GET",
@@ -140,14 +142,10 @@ class ElternPortalApiClient {
         return t;
       });
       if (param__from !== 0) {
-        data.result = data.result.filter((t: any) =>
-          t.start >= param__from
-        )
+        data.result = data.result.filter((t: any) => t.start >= param__from);
       }
       if (param__to !== 0) {
-        data.result = data.result.filter((t: any) =>
-          t.end <= param__to
-        )
+        data.result = data.result.filter((t: any) => t.end <= param__to);
       }
       return data.result;
     }
@@ -167,10 +165,12 @@ class ElternPortalApiClient {
         go_to: "service/stundenplan",
       },
     });
-    const tmp = cheerioLoad(data)("#asam_content > div > table > tbody tr td").get()
+    const tmp = cheerioLoad(data)(
+      "#asam_content > div > table > tbody tr td"
+    ).get();
     // @ts-ignore
     let rows = [];
-    let std = 0
+    let std = 0;
     tmp.forEach((r) => {
       const rowsDOM = cheerioLoad(r)("td").get();
       // @ts-ignore
@@ -179,7 +179,9 @@ class ElternPortalApiClient {
         const rowHTML = cheerioLoad(t).html();
         if (rowHTML.includes('width="15%"')) {
           const arr1 = (rowHTML || "").split("<br>");
-          const value = parseInt((arr1[0] || "").split(">")[1].replace(".", ""));
+          const value = parseInt(
+            (arr1[0] || "").split(">")[1].replace(".", "")
+          );
           std = value;
           // const value = std
           const detail = (arr1[1] || "").split("<")[0].replaceAll(".", ":");
@@ -249,6 +251,18 @@ class ElternPortalApiClient {
         if (($(ele).find("td:first").html() as string).includes("<h4>")) {
           const title = $(ele).find("td:first a h4").text();
           $(ele).remove("h4");
+          const messageText = $(ele)
+            .find("td:first")
+            .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
+          const classes = $(ele)
+            .find("span[style='font-size: 8pt;']")
+            .text()
+            .replace("Klasse/n: ", "");
           const link = $(ele).find("td:first a").attr("href");
           const date = $(ele)
             .find("td:first a")
@@ -257,6 +271,8 @@ class ElternPortalApiClient {
           $(ele).remove("a");
           return {
             title,
+            messageText,
+            classes,
             link,
             date,
             info: $(ele).find("td:last").text(),
@@ -278,12 +294,15 @@ class ElternPortalApiClient {
         id: parseInt((tmp[index].id as string).replace("#", "")),
         status: tmp[index].status,
         title: tmp[index + 1].title,
+        messageText: tmp[index + 1].messageText,
+        classes: tmp[index + 1].classes ?? "",
         date: tmp[index + 1].date,
         link: tmp[index + 1].link,
       });
     }
     return briefe;
   }
+
   async getFile(file = "") {
     await this.client.request({
       method: "POST",
