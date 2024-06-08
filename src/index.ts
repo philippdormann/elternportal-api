@@ -101,7 +101,7 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
-  async getTermine(from = "0", to = "0") {
+  async getTermine(from = 0, to = 0) {
     const now = Date.now();
     await this.client.request({
       method: "POST",
@@ -117,19 +117,19 @@ class ElternPortalApiClient {
       },
     });
     const utc_offset = new Date().getTimezoneOffset();
-    let param__from = parseInt(from);
+    let param__from = from;
     if (param__from === 0) {
       param__from = now;
     }
-    let param__to = parseInt(to);
+    let param__to = to;
     if (param__to === 0) {
       param__to = now + 1000 * 60 * 60 * 24 * 90;
     }
     //
-    if (`${from.length}`.length !== 13) {
+    if (`${from}`.length !== 13) {
       param__from = parseInt(`${param__from}`.padEnd(13, "0"));
     }
-    if (`${to.length}`.length !== 13) {
+    if (`${to}`.length !== 13) {
       param__to = parseInt(`${param__to}`.padEnd(13, "0"));
     }
     const { data } = await this.client.request({
