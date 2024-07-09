@@ -101,7 +101,8 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
-  async getTermine({ from = "", to = "" }) {
+  async getTermine(from = 0, to = 0) {
+    const now = Date.now();
     await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
@@ -116,12 +117,19 @@ class ElternPortalApiClient {
       },
     });
     const utc_offset = new Date().getTimezoneOffset();
-    let param__from = parseInt(from);
-    if (`${from.length}`.length !== 13) {
+    let param__from = from;
+    if (param__from === 0) {
+      param__from = now;
+    }
+    let param__to = to;
+    if (param__to === 0) {
+      param__to = now + 1000 * 60 * 60 * 24 * 90;
+    }
+    //
+    if (`${from}`.length !== 13) {
       param__from = parseInt(`${param__from}`.padEnd(13, "0"));
     }
-    let param__to = parseInt(to);
-    if (`${to.length}`.length !== 13) {
+    if (`${to}`.length !== 13) {
       param__to = parseInt(`${param__to}`.padEnd(13, "0"));
     }
     const { data } = await this.client.request({
@@ -141,12 +149,8 @@ class ElternPortalApiClient {
         t.id = parseInt(t.id.replace("id_", ""));
         return t;
       });
-      if (param__from !== 0) {
-        data.result = data.result.filter((t: any) => t.start >= param__from);
-      }
-      if (param__to !== 0) {
-        data.result = data.result.filter((t: any) => t.end <= param__to);
-      }
+      data.result = data.result.filter((t: any) => t.start >= param__from);
+      data.result = data.result.filter((t: any) => t.end <= param__to);
       return data.result;
     }
     return [];
@@ -185,18 +189,22 @@ class ElternPortalApiClient {
           std = value;
           // const value = std
           const detail = (arr1[1] || "").split("<")[0].replaceAll(".", ":");
-          cols.push({ type: "info", value, detail, std });
+          rows.push({ type: "info", value, detail, std });
         } else {
           const arr1 = (rowHTML || "").split("<br>");
           const value = (arr1[0] || "").split('<span class="">')[1];
           const detail = (arr1[1] || "").split(" </span>")[0];
-          cols.push({ type: "class", value, detail, std });
+          rows.push({ type: "class", value, detail, std });
         }
         // std++
       });
       // @ts-ignore
-      rows.push(cols);
+      // @ts-ignore
+      // rows.push(cols);
     });
+    // @ts-ignore
+    rows = rows.filter((r) => r.std !== null);
+    // rows = rows.filter(r => r.std === null)
     // @ts-ignore
     return rows;
   }
