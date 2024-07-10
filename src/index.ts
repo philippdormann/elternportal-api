@@ -373,25 +373,6 @@ class ElternPortalApiClient {
     return briefe;
   }
 
-  async getFile(file = "") {
-    await this.client.request({
-      method: "POST",
-      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data: {
-        csrf: this.csrf,
-        username: this.username,
-        password: this.password,
-        go_to: "aktuelles/elternbriefe",
-      },
-    });
-    // const res = await client.get(`https://${this.short}.eltern-portal.org/aktuelles/get_file/?repo=${file}&csrf=${csrf}`, { responseType: 'arraybuffer' });
-    // writeFileSync("./out.pdf", res.data);
-    return {};
-  }
-
   private htmlToPlainText(html: string): string {
     const dom = new JSDOM(html);
     return dom.window.document.body.textContent || "";
