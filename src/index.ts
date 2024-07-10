@@ -237,7 +237,7 @@ class ElternPortalApiClient {
     }
     return [];
   }
-  async getStundenplan() {
+  async getStundenplan(): Promise<any> {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
