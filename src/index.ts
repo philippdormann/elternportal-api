@@ -13,6 +13,15 @@ type SchoolInfo = {
   key: string;
   value: string;
 };
+type Termin = {
+  id: number;
+  title: string;
+  title_short: string;
+  class: "event-info";
+  bo_end: 0 | 1;
+  start: number;
+  end: number;
+};
 type ElternPortalApiClientConfig = {
   short: string;
   username: string;
@@ -26,7 +35,7 @@ type InfoBox = {
   content: string;
 };
 // =========
-async function getElternportalClient(config: ElternPortalApiClientConfig) {
+async function getElternportalClient(config: ElternPortalApiClientConfig): Promise<InstanceType<typeof ElternPortalApiClient>> {
   const apiclient = new ElternPortalApiClient(config);
   await apiclient.init();
   return apiclient;
@@ -163,7 +172,7 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
-  async getTermine(from = 0, to = 0) {
+  async getTermine(from = 0, to = 0): Promise<Termin[]> {
     const now = Date.now();
     await this.client.request({
       method: "POST",
