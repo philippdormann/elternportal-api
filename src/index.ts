@@ -22,6 +22,15 @@ type Termin = {
   start: number;
   end: number;
 };
+type Elternbrief = {
+  id: number;
+  status: "read" | "unread";
+  title: string;
+  messageText: string;
+  classes: string;
+  date: string;
+  link: string;
+};
 type ElternPortalApiClientConfig = {
   short: string;
   username: string;
@@ -308,7 +317,7 @@ class ElternPortalApiClient {
       .filter((f) => f.trim());
     return fundsachen;
   }
-  async getElternbriefe() {
+  async getElternbriefe(): Promise<Elternbrief[]> {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
