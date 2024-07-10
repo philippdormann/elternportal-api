@@ -21,6 +21,7 @@
     "axios": "1.7.2",
     "axios-cookiejar-support": "5.0.2",
     "cheerio": "1.0.0-rc.12",
+    "jsdom": "^24.1.0",
     "tough-cookie": "4.1.4"
   },
   "files": [
@@ -28,6 +29,8 @@
     "./dist"
   ],
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^20.14.10",
     "@types/tough-cookie": "4.0.5",
     "esno": "4.7.0",
     "unbuild": "2.0.0"

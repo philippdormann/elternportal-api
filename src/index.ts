@@ -2,6 +2,7 @@ import { load as cheerioLoad } from "cheerio";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { Cookie, CookieJar } from "tough-cookie";
+import { JSDOM } from "jsdom";
 
 //
 type Kid = {
@@ -16,6 +17,11 @@ type ElternPortalApiClientConfig = {
   short: string;
   username: string;
   password: string;
+};
+type InfoBox = {
+  date: string;
+  title: string;
+  content: string;
 };
 // =========
 async function getElternportalClient(config: ElternPortalApiClientConfig) {
@@ -71,6 +77,43 @@ class ElternPortalApiClient {
       },
     ];
     return kids;
+  }
+  async getSchwarzesBrett(): Promise<InfoBox[]> {
+    const { data } = await this.client.request({
+      method: "POST",
+      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        csrf: this.csrf,
+        username: this.username,
+        password: this.password,
+        go_to: "aktuelles/schwarzes_brett",
+      },
+    });
+    const $ = cheerioLoad(data);
+    const posts: InfoBox[] = [];
+
+    $(".container .grid-item").each((index, element) => {
+      const date = $(element)
+        .find(".text-right")
+        .text()
+        .trim()
+        .replace("eingestellt am ", "");
+      const title = $(element).find("h4").text().trim();
+      const content = this.htmlToPlainText(
+        $(element)
+          .find("p:not(.text-right)")
+          .map((i, el) => $(el).html())
+          .get()
+          .join("<br>")
+      );
+
+      posts.push({ date, title, content });
+    });
+
+    return posts;
   }
   async getSchoolInfos(): Promise<SchoolInfo[]> {
     const { data } = await this.client.request({
@@ -328,6 +371,11 @@ class ElternPortalApiClient {
     // const res = await client.get(`https://${this.short}.eltern-portal.org/aktuelles/get_file/?repo=${file}&csrf=${csrf}`, { responseType: 'arraybuffer' });
     // writeFileSync("./out.pdf", res.data);
     return {};
+  }
+
+  private htmlToPlainText(html: string): string {
+    const dom = new JSDOM(html);
+    return dom.window.document.body.textContent || "";
   }
 }
 // =========
