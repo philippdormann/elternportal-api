@@ -19,7 +19,9 @@ type ElternPortalApiClientConfig = {
   password: string;
 };
 type InfoBox = {
-  date: string;
+  archived: Boolean;
+  dateStart: string;
+  dateEnd: string | null;
   title: string;
   content: string;
 };
@@ -78,7 +80,7 @@ class ElternPortalApiClient {
     ];
     return kids;
   }
-  async getSchwarzesBrett(): Promise<InfoBox[]> {
+  async getSchwarzesBrett(includeArchived = false): Promise<InfoBox[]> {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
@@ -96,12 +98,14 @@ class ElternPortalApiClient {
     const posts: InfoBox[] = [];
 
     $(".container .grid-item").each((index, element) => {
-      const date = $(element)
+      const dateStart = $(element)
         .find(".text-right")
         .text()
         .trim()
-        .replace("eingestellt am ", "");
-      const title = $(element).find("h4").text().trim();
+        .replace("eingestellt am ", "")
+        .replace(" 00:00:00", "")
+        .replace(",,", '"');
+      const title = $(element).find("h4").text().trim().replace(",,", '"');
       const content = this.htmlToPlainText(
         $(element)
           .find("p:not(.text-right)")
@@ -110,8 +114,23 @@ class ElternPortalApiClient {
           .join("<br>")
       );
 
-      posts.push({ date, title, content });
+      posts.push({ dateStart, dateEnd: null, title, content, archived: false });
     });
+
+    if (includeArchived) {
+      $(".arch .well").each((index, element) => {
+        const title = $(element).find("h4").text().trim().replace(",,", '"');
+        const content = $(element)
+          .find(".col-sm-9 p")
+          .text()
+          .replace(",,", '"');
+        const dates = $(element).find(".col-md-2 p").text().trim().split(" - ");
+        const dateStart = dates[0];
+        const dateEnd = dates[1];
+
+        posts.push({ dateStart, dateEnd, title, content, archived: true });
+      });
+    }
 
     return posts;
   }
