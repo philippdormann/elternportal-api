@@ -24,7 +24,7 @@ type Termin = {
 };
 type Elternbrief = {
   id: number;
-  status: "read" | "unread";
+  status: string;
   title: string;
   messageText: string;
   classes: string;
@@ -44,7 +44,9 @@ type InfoBox = {
   content: string;
 };
 // =========
-async function getElternportalClient(config: ElternPortalApiClientConfig): Promise<InstanceType<typeof ElternPortalApiClient>> {
+async function getElternportalClient(
+  config: ElternPortalApiClientConfig
+): Promise<InstanceType<typeof ElternPortalApiClient>> {
   const apiclient = new ElternPortalApiClient(config);
   await apiclient.init();
   return apiclient;
@@ -376,16 +378,16 @@ class ElternPortalApiClient {
           status,
         };
       });
-    let briefe = [];
+    let briefe: Elternbrief[] = [];
     for (let index = 0; index < tmp.length; index += 2) {
       briefe.push({
         id: parseInt((tmp[index].id as string).replace("#", "")),
-        status: tmp[index].status,
-        title: tmp[index + 1].title,
-        messageText: tmp[index + 1].messageText,
+        status: tmp[index].status ?? "unread",
+        title: tmp[index + 1].title ?? "",
+        messageText: tmp[index + 1].messageText ?? "",
         classes: tmp[index + 1].classes ?? "",
-        date: tmp[index + 1].date,
-        link: tmp[index + 1].link,
+        date: tmp[index + 1].date ?? "",
+        link: tmp[index + 1].link ?? "",
       });
     }
     return briefe;
