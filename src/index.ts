@@ -1,7 +1,7 @@
 import { load as cheerioLoad } from "cheerio";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { wrapper } from "axios-cookiejar-support";
-import { Cookie, CookieJar } from "tough-cookie";
+import { CookieJar } from "tough-cookie";
 import { JSDOM } from "jsdom";
 
 //
@@ -13,40 +13,19 @@ type SchoolInfo = {
   key: string;
   value: string;
 };
-type Termin = {
-  id: number;
-  title: string;
-  title_short: string;
-  class: "event-info";
-  bo_end: 0 | 1;
-  start: number;
-  end: number;
-};
-type Elternbrief = {
-  id: number;
-  status: string;
-  title: string;
-  messageText: string;
-  classes: string;
-  date: string;
-  link: string;
-};
 type ElternPortalApiClientConfig = {
   short: string;
   username: string;
   password: string;
+  kidId: number;
 };
 type InfoBox = {
-  archived: Boolean;
-  dateStart: string;
-  dateEnd: string | null;
+  date: string;
   title: string;
   content: string;
 };
 // =========
-async function getElternportalClient(
-  config: ElternPortalApiClientConfig
-): Promise<InstanceType<typeof ElternPortalApiClient>> {
+async function getElternportalClient(config: ElternPortalApiClientConfig) {
   const apiclient = new ElternPortalApiClient(config);
   await apiclient.init();
   return apiclient;
@@ -57,11 +36,13 @@ class ElternPortalApiClient {
   short: string = "";
   username: string = "";
   password: string = "";
+  kidId: number = 0;
   csrf: string = "";
   constructor(config: ElternPortalApiClientConfig) {
     this.short = config.short;
     this.username = config.username;
     this.password = config.password;
+    this.kidId = config.kidId;
     //
     this.jar = new CookieJar();
     this.client = wrapper(axios.create({ jar: this.jar }));
@@ -74,6 +55,8 @@ class ElternPortalApiClient {
     const $ = cheerioLoad(data);
     const parsedCSRFToken = $(`[name='csrf']`).val() as string;
     this.csrf = parsedCSRFToken;
+
+    await this.setKid(this.kidId);
   }
   async getKids(): Promise<Kid[]> {
     const { data } = await this.client.request({
@@ -90,17 +73,38 @@ class ElternPortalApiClient {
       },
     });
     const $ = cheerioLoad(data);
-    const kids = [
-      {
-        name: $(`.pupil-selector select option`)
-          .text()
-          .replace(/^\s+|\s+$/g, ""),
-        id: parseInt($(`.pupil-selector select option`).val() as string),
-      },
-    ];
+    const kids: Kid[] = [];
+
+    const formControl = $(`.pupil-selector .form-group .form-control`);
+    formControl.find("option").each((index, element) => {
+      const name = $(element).text();
+      const id = $(element).attr("value");
+
+      const kid = { name, id: parseInt(id ?? "0") };
+      kids.push(kid);
+    });
+
     return kids;
   }
-  async getSchwarzesBrett(includeArchived = false): Promise<InfoBox[]> {
+
+  async setKid(kidId: number) {
+    const { data } = await this.client.request({
+      method: "POST",
+      url: `https://${this.short}.eltern-portal.org/api/set_child.php?id=${this.kidId}`,
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+      },
+      data: {
+        csrf: this.csrf,
+        username: this.username,
+        password: this.password,
+        go_to: "",
+      },
+    });
+
+    // 1 is retuned, when selection was succesfull
+  }
+  async getSchwarzesBrett(): Promise<InfoBox[]> {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
@@ -118,14 +122,12 @@ class ElternPortalApiClient {
     const posts: InfoBox[] = [];
 
     $(".container .grid-item").each((index, element) => {
-      const dateStart = $(element)
+      const date = $(element)
         .find(".text-right")
         .text()
         .trim()
-        .replace("eingestellt am ", "")
-        .replace(" 00:00:00", "")
-        .replace(",,", '"');
-      const title = $(element).find("h4").text().trim().replace(",,", '"');
+        .replace("eingestellt am ", "");
+      const title = $(element).find("h4").text().trim();
       const content = this.htmlToPlainText(
         $(element)
           .find("p:not(.text-right)")
@@ -134,23 +136,8 @@ class ElternPortalApiClient {
           .join("<br>")
       );
 
-      posts.push({ dateStart, dateEnd: null, title, content, archived: false });
+      posts.push({ date, title, content });
     });
-
-    if (includeArchived) {
-      $(".arch .well").each((index, element) => {
-        const title = $(element).find("h4").text().trim().replace(",,", '"');
-        const content = $(element)
-          .find(".col-sm-9 p")
-          .text()
-          .replace(",,", '"');
-        const dates = $(element).find(".col-md-2 p").text().trim().split(" - ");
-        const dateStart = dates[0];
-        const dateEnd = dates[1];
-
-        posts.push({ dateStart, dateEnd, title, content, archived: true });
-      });
-    }
 
     return posts;
   }
@@ -183,7 +170,7 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
-  async getTermine(from = 0, to = 0): Promise<Termin[]> {
+  async getTermine(from = 0, to = 0) {
     const now = Date.now();
     await this.client.request({
       method: "POST",
@@ -237,7 +224,7 @@ class ElternPortalApiClient {
     }
     return [];
   }
-  async getStundenplan(): Promise<any> {
+  async getStundenplan() {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
@@ -319,7 +306,7 @@ class ElternPortalApiClient {
       .filter((f) => f.trim());
     return fundsachen;
   }
-  async getElternbriefe(): Promise<Elternbrief[]> {
+  async getElternbriefe() {
     const { data } = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
@@ -378,19 +365,38 @@ class ElternPortalApiClient {
           status,
         };
       });
-    let briefe: Elternbrief[] = [];
+    let briefe = [];
     for (let index = 0; index < tmp.length; index += 2) {
       briefe.push({
         id: parseInt((tmp[index].id as string).replace("#", "")),
-        status: tmp[index].status ?? "unread",
-        title: tmp[index + 1].title ?? "",
-        messageText: tmp[index + 1].messageText ?? "",
+        status: tmp[index].status,
+        title: tmp[index + 1].title,
+        messageText: tmp[index + 1].messageText,
         classes: tmp[index + 1].classes ?? "",
-        date: tmp[index + 1].date ?? "",
-        link: tmp[index + 1].link ?? "",
+        date: tmp[index + 1].date,
+        link: tmp[index + 1].link,
       });
     }
     return briefe;
+  }
+
+  async getFile(file = "") {
+    await this.client.request({
+      method: "POST",
+      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        csrf: this.csrf,
+        username: this.username,
+        password: this.password,
+        go_to: "aktuelles/elternbriefe",
+      },
+    });
+    // const res = await client.get(`https://${this.short}.eltern-portal.org/aktuelles/get_file/?repo=${file}&csrf=${csrf}`, { responseType: 'arraybuffer' });
+    // writeFileSync("./out.pdf", res.data);
+    return {};
   }
 
   private htmlToPlainText(html: string): string {
