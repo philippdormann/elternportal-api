@@ -113,7 +113,7 @@ class ElternPortalApiClient {
 
     const kids: Kid[] = [];
 
-    $("select.form-control option").each((index, element) => {
+    $("select.form-control option").each((_index: number, element) => {
       const id = parseInt($(element).attr("value") || "0");
       const name = $(element).text().trim();
 
@@ -140,7 +140,7 @@ class ElternPortalApiClient {
     const $ = cheerioLoad(data);
     const posts: InfoBox[] = [];
 
-    $(".container .grid-item").each((index, element) => {
+    $(".container .grid-item").each((_index: number, element) => {
       const dateStart = $(element)
         .find(".text-right")
         .text()
@@ -152,7 +152,7 @@ class ElternPortalApiClient {
       const content = this.htmlToPlainText(
         $(element)
           .find("p:not(.text-right)")
-          .map((i, el) => $(el).html())
+          .map((_i, el) => $(el).html())
           .get()
           .join("<br>")
       );
@@ -161,7 +161,7 @@ class ElternPortalApiClient {
     });
 
     if (includeArchived) {
-      $(".arch .well").each((index, element) => {
+      $(".arch .well").each((_index: number, element) => {
         const title = $(element).find("h4").text().trim().replace(",,", '"');
         const content = $(element)
           .find(".col-sm-9 p")
