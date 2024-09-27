@@ -44,6 +44,7 @@ type InfoBox = {
   content: string;
 };
 // =========
+/** gives you a new ElternPortalApiClient instance */
 async function getElternportalClient(
   config: ElternPortalApiClientConfig
 ): Promise<InstanceType<typeof ElternPortalApiClient>> {
@@ -95,6 +96,7 @@ class ElternPortalApiClient {
       },
     });
   }
+  /** list all kids in account */
   async getKids(): Promise<Kid[]> {
     const { data } = await this.client.request({
       method: "POST",
@@ -123,6 +125,7 @@ class ElternPortalApiClient {
     return kids;
   }
 
+  /** get array of blackboard items */
   async getSchwarzesBrett(includeArchived = false): Promise<InfoBox[]> {
     const { data } = await this.client.request({
       method: "POST",
@@ -177,6 +180,7 @@ class ElternPortalApiClient {
 
     return posts;
   }
+  /** get school infos as key value json array */
   async getSchoolInfos(): Promise<SchoolInfo[]> {
     const { data } = await this.client.request({
       method: "POST",
@@ -206,6 +210,7 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
+  /** get termine of entire school */
   async getTermine(from = 0, to = 0): Promise<Termin[]> {
     const now = Date.now();
     await this.client.request({
@@ -260,6 +265,7 @@ class ElternPortalApiClient {
     }
     return [];
   }
+  /** get timetable of currently selected kid */
   async getStundenplan(): Promise<any> {
     const { data } = await this.client.request({
       method: "POST",
@@ -313,6 +319,7 @@ class ElternPortalApiClient {
     // @ts-ignore
     return rows;
   }
+  /** get lost and found items */
   async getFundsachen(): Promise<string[]> {
     const { data } = await this.client.request({
       method: "POST",
@@ -342,6 +349,7 @@ class ElternPortalApiClient {
       .filter((f) => f.trim());
     return fundsachen;
   }
+  /** get parents letters */
   async getElternbriefe(): Promise<Elternbrief[]> {
     const { data } = await this.client.request({
       method: "POST",
