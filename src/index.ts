@@ -75,6 +75,26 @@ class ElternPortalApiClient {
     const parsedCSRFToken = $(`[name='csrf']`).val() as string;
     this.csrf = parsedCSRFToken;
   }
+
+  // currently under development
+  async setKid(kidId: number) {
+    // 1: Login
+    await this.client.request({
+      method: "POST",
+      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        csrf: this.csrf,
+        username: this.username,
+        password: this.password,
+        // 2: navigate to the api endpoint to set the child
+        go_to: `api/set_child.php?id=${kidId}`,
+        // 3: implement a go_to2 parameter to navigate to the desired page
+      },
+    });
+  }
   async getKids(): Promise<Kid[]> {
     const { data } = await this.client.request({
       method: "POST",
@@ -90,16 +110,19 @@ class ElternPortalApiClient {
       },
     });
     const $ = cheerioLoad(data);
-    const kids = [
-      {
-        name: $(`.pupil-selector select option`)
-          .text()
-          .replace(/^\s+|\s+$/g, ""),
-        id: parseInt($(`.pupil-selector select option`).val() as string),
-      },
-    ];
+
+    const kids: Kid[] = [];
+
+    $("select.form-control option").each((index, element) => {
+      const id = parseInt($(element).attr("value") || "0");
+      const name = $(element).text().trim();
+
+      kids.push({ id, name });
+    });
+
     return kids;
   }
+
   async getSchwarzesBrett(includeArchived = false): Promise<InfoBox[]> {
     const { data } = await this.client.request({
       method: "POST",
