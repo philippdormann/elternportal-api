@@ -31,7 +31,6 @@
   "devDependencies": {
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.7.3",
-    "@types/tough-cookie": "4.0.5",
     "esno": "4.7.0",
     "unbuild": "2.0.0"
   }
