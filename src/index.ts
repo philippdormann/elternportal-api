@@ -1,8 +1,8 @@
-import { load as cheerioLoad } from "cheerio";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { wrapper } from "axios-cookiejar-support";
-import { Cookie, CookieJar } from "tough-cookie";
+import { load as cheerioLoad } from "cheerio";
 import { JSDOM } from "jsdom";
+import { CookieJar } from "tough-cookie";
 
 //
 type Kid = {
@@ -423,3 +423,4 @@ class ElternPortalApiClient {
 }
 // =========
 export { ElternPortalApiClient, getElternportalClient };
+
