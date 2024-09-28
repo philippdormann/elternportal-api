@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { load as cheerioLoad } from "cheerio";
 import { console } from "inspector";
@@ -90,7 +90,7 @@ class ElternPortalApiClient {
   }
 
   async setKid(kidId: number) {
-    const { data } = await this.client.request({
+    await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
       headers: {
@@ -104,12 +104,12 @@ class ElternPortalApiClient {
       },
     });
 
-    const resposne = await this.client.request({
+    const response = await this.client.request({
       method: "POST",
       url: `https://${this.short}.eltern-portal.org/api/set_child.php?id=${kidId}`,
     });
 
-    if (resposne.data === 1) {
+    if (response.data === 1) {
       console.log("Kid set to:", kidId);
     } else {
       console.log("Failed to set kid to:", kidId);
@@ -275,8 +275,6 @@ class ElternPortalApiClient {
     let std = 0;
     tmp.forEach((r) => {
       const rowsDOM = cheerioLoad(r)("td").get();
-      // @ts-ignore
-      let cols = [];
       rowsDOM.forEach((t) => {
         const rowHTML = cheerioLoad(t).html();
         if (rowHTML.includes('width="15%"')) {
@@ -285,7 +283,6 @@ class ElternPortalApiClient {
             (arr1[0] || "").split(">")[1].replace(".", "")
           );
           std = value;
-          // const value = std
           const detail = (arr1[1] || "").split("<")[0].replaceAll(".", ":");
           rows.push({ type: "info", value, detail, std });
         } else {
@@ -294,15 +291,10 @@ class ElternPortalApiClient {
           const detail = (arr1[1] || "").split(" </span>")[0];
           rows.push({ type: "class", value, detail, std });
         }
-        // std++
       });
-      // @ts-ignore
-      // @ts-ignore
-      // rows.push(cols);
     });
     // @ts-ignore
     rows = rows.filter((r) => r.std !== null);
-    // rows = rows.filter(r => r.std === null)
     // @ts-ignore
     return rows;
   }
