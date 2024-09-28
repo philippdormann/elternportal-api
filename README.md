@@ -41,12 +41,6 @@ const client = await getElternportalClient({
 const kids = await client.getKids();
 ```
 
-#### Set Active Kid 🧒
-
-```typescript
-await client.setKid(kidId);
-```
-
 #### Get School Information 🏫
 
 ```typescript
