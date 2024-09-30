@@ -30,8 +30,8 @@
   ],
   "devDependencies": {
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.7.3",
-    "esno": "4.7.0",
+    "@types/node": "^22.7.4",
+    "esno": "4.8.0",
     "unbuild": "2.0.0"
   }
 }
