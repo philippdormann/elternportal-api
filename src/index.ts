@@ -20,8 +20,13 @@ type Termin = {
   title_short: string;
   class: "event-info";
   bo_end: 0 | 1;
-  start: number;
-  end: number;
+  startDate: Date;
+  endDate: Date;
+};
+export type Schulaufgabe = {
+  id: number;
+  title: string;
+  date: Date;
 };
 type Elternbrief = {
   id: number;
@@ -163,7 +168,7 @@ class ElternPortalApiClient {
       const id = parseInt(link?.split("repo=")[1].split("&")[0] ?? "0");
 
       posts.push({
-        id: id == 0 ? null : id,
+        id: id == 0 ? this.getIdFromTitle(title) : id,
         dateStart,
         dateEnd: null,
         title,
@@ -220,8 +225,64 @@ class ElternPortalApiClient {
       });
     return schoolInfos;
   }
+
   /** get termine of entire school */
   async getTermine(from = 0, to = 0): Promise<Termin[]> {
+    const [param__from, param__to, utc_offset] = this.getFromAndToParams(
+      from,
+      to
+    );
+    const { data } = await this.client.request({
+      method: "GET",
+      url: `https://${this.short}.eltern-portal.org/api/ws_get_termine.php`,
+      params: { from: param__from, to: param__to, utc_offset },
+    });
+    if (data.success === 1) {
+      data.result = data.result.map((t: any) => {
+        t.title = t.title.replaceAll("<br />", "<br>").replaceAll("<br>", "\n");
+        t.title_short = t.title_short
+          .replaceAll("<br />", "<br>")
+          .replaceAll("<br>", "\n");
+        t.startDate = new Date(parseInt(t.start));
+        t.endDate = new Date(parseInt(t.end));
+        t.bo_end = parseInt(t.bo_end);
+        t.id = parseInt(t.id.replace("id_", ""));
+        return t;
+      });
+      data.result = data.result.filter((t: any) => t.start >= param__from);
+      data.result = data.result.filter((t: any) => t.end <= param__to);
+      return data.result;
+    }
+    return [];
+  }
+
+  async getSchulaufgabenplan(): Promise<Schulaufgabe[]> {
+    const { data } = await this.client.request({
+      method: "GET",
+      url: `https://${this.short}.eltern-portal.org/service/termine/liste/schulaufgaben#10`,
+    });
+    const $ = cheerioLoad(data);
+    const schulaufgaben: Schulaufgabe[] = [];
+
+    $(".container #asam_content .row .no_padding_md .table2 tbody tr").each(
+      (index, element) => {
+        const datum = $(element).find("td").eq(0).text().trim();
+        const titel = $(element).find("td").eq(2).text().trim();
+
+        if (titel && datum) {
+          const schaulaufgabe: Schulaufgabe = {
+            id: this.getIdFromTitle(titel),
+            title: titel,
+            date: this.toDate(datum),
+          };
+          schulaufgaben.push(schaulaufgabe);
+        }
+      }
+    );
+    return schulaufgaben;
+  }
+
+  private getFromAndToParams(from = 0, to = 0): [number, number, number] {
     const now = Date.now();
     const utc_offset = new Date().getTimezoneOffset();
     let param__from = from;
@@ -239,28 +300,8 @@ class ElternPortalApiClient {
     if (`${to}`.length !== 13) {
       param__to = parseInt(`${param__to}`.padEnd(13, "0"));
     }
-    const { data } = await this.client.request({
-      method: "GET",
-      url: `https://${this.short}.eltern-portal.org/api/ws_get_termine.php`,
-      params: { from: param__from, to: param__to, utc_offset },
-    });
-    if (data.success === 1) {
-      data.result = data.result.map((t: any) => {
-        t.title = t.title.replaceAll("<br />", "<br>").replaceAll("<br>", "\n");
-        t.title_short = t.title_short
-          .replaceAll("<br />", "<br>")
-          .replaceAll("<br>", "\n");
-        t.start = parseInt(t.start);
-        t.end = parseInt(t.end);
-        t.bo_end = parseInt(t.bo_end);
-        t.id = parseInt(t.id.replace("id_", ""));
-        return t;
-      });
-      data.result = data.result.filter((t: any) => t.start >= param__from);
-      data.result = data.result.filter((t: any) => t.end <= param__to);
-      return data.result;
-    }
-    return [];
+
+    return [param__from, param__to, utc_offset];
   }
   /** get timetable of currently selected kid */
   async getStundenplan(): Promise<any> {
@@ -424,6 +465,24 @@ class ElternPortalApiClient {
     });
     const buffer = Buffer.from(response.data, "binary");
     return buffer;
+  }
+
+  private getIdFromTitle(title: string): number {
+    let hash = 5381;
+    for (let i = 0; i < title.length; i++) {
+      hash = (hash * 33) ^ title.charCodeAt(i); // Multipliziere den Hash und XOR mit dem aktuellen Zeichen
+    }
+    return hash >>> 0; // Umwandlung in eine positive Ganzzahl
+  }
+
+  toDate(dateString: string): Date {
+    const [day, month, year] = dateString.split(".").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  // timestamp to dte
+  timestampToDate(timestamp: number): Date {
+    return new Date(timestamp);
   }
 
   private htmlToPlainText(html: string): string {
