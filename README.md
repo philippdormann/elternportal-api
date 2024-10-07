@@ -1,6 +1,6 @@
 # ElternPortal API Client 📚
 
-This Node.js library provides an easy-to-use interface for interacting with the ElternPortal system, a platform for school-parent communication in Germany.
+This library provides an easy-to-use interface for interacting with the ElternPortal system, a platform for school-parent communication in Germany.
 
 ## Features 🌟
 
@@ -23,13 +23,13 @@ pnpm i @philippdormann/elternportal-api
 ### Initializing the Client
 
 ```typescript
-import { getElternportalClient } from 'elternportal-api-client';
+import { getElternportalClient } from "@philippdormann/elternportal-api";
 
 const client = await getElternportalClient({
-  short: 'schoolcode',
-  username: 'your_username',
-  password: 'your_password',
-  kidId: 0 // Optional
+  short: "schoolcode",
+  username: "your_username",
+  password: "your_password",
+  kidId: 0, // Optional
 });
 ```
 
