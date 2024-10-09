@@ -1,11 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { load as cheerioLoad } from "cheerio";
-import { console } from "inspector";
 import { JSDOM } from "jsdom";
 import { CookieJar } from "tough-cookie";
 
-//
 type Kid = {
   name: string;
   id: number;
@@ -115,9 +113,9 @@ class ElternPortalApiClient {
     });
 
     if (response.data === 1) {
-      console.log("Kid set to:", kidId);
+      // console.log("Kid set to:", kidId);
     } else {
-      console.log("Failed to set kid to:", kidId);
+      // console.log("Failed to set kid to:", kidId);
     }
   }
   /** list all kids in account */
@@ -480,7 +478,7 @@ class ElternPortalApiClient {
     return new Date(year, month - 1, day);
   }
 
-  // timestamp to dte
+  // timestamp to date
   timestampToDate(timestamp: number): Date {
     return new Date(timestamp);
   }
