@@ -450,7 +450,10 @@ class ElternPortalApiClient {
     return file;
   }
 
-  async getElternbrief(id: number): Promise<ElternportalFile> {
+  async getElternbrief(
+    id: number,
+    validateElternbriefReceipt: boolean = true
+  ): Promise<ElternportalFile> {
     const elternbriefe = await this.getElternbriefe();
     const brief = elternbriefe.find((brief) => brief.id === id);
 
@@ -459,7 +462,10 @@ class ElternPortalApiClient {
     }
 
     const buffer = await this.getFileBuffer(brief?.link ?? "");
-    await this.empfangBestätigen(brief);
+
+    if (validateElternbriefReceipt) {
+      await this.validateElternbriefReceipt(brief);
+    }
 
     const file = {
       name: brief.title,
@@ -468,7 +474,7 @@ class ElternPortalApiClient {
     return file;
   }
 
-  private async empfangBestätigen(elternbrief: Elternbrief) {
+  private async validateElternbriefReceipt(elternbrief: Elternbrief) {
     if (elternbrief.readConfirmationId) {
       await this.client.get(
         `https://${this.short}.eltern-portal.org/api/elternbrief_bestaetigen.php?eb=${elternbrief.readConfirmationId}`
