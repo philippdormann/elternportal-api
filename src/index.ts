@@ -28,6 +28,7 @@ export type Schulaufgabe = {
 };
 type Elternbrief = {
   id: number;
+  readConfirmationId: number | undefined;
   status: string;
   title: string;
   messageText: string;
@@ -368,6 +369,14 @@ class ElternPortalApiClient {
       .get()
       .map((ele) => {
         if (($(ele).find("td:first").html() as string).includes("<h4>")) {
+          const readConfirmationStringId =
+            $(ele)
+              .find("a")
+              .attr("onclick")
+              ?.match(/eb_bestaetigung\((\d+)\)/)![1] ?? undefined;
+          const readConfirmationId = readConfirmationStringId
+            ? parseInt(readConfirmationStringId)
+            : undefined;
           const title = $(ele).find("td:first a h4").text();
           $(ele).remove("h4");
           const messageText = $(ele)
@@ -389,6 +398,7 @@ class ElternPortalApiClient {
             .replace(`${title} `, "");
           $(ele).remove("a");
           return {
+            readConfirmationId,
             title,
             messageText,
             classes,
@@ -410,6 +420,7 @@ class ElternPortalApiClient {
     for (let index = 0; index < tmp.length; index += 2) {
       briefe.push({
         id: parseInt((tmp[index].id as string).replace("#", "")),
+        readConfirmationId: tmp[index + 1].readConfirmationId,
         status: tmp[index].status ?? "unread",
         title: tmp[index + 1].title ?? "",
         messageText: tmp[index + 1].messageText ?? "",
@@ -439,7 +450,10 @@ class ElternPortalApiClient {
     return file;
   }
 
-  async getElternbrief(id: number): Promise<ElternportalFile> {
+  async getElternbrief(
+    id: number,
+    validateElternbriefReceipt: boolean = true
+  ): Promise<ElternportalFile> {
     const elternbriefe = await this.getElternbriefe();
     const brief = elternbriefe.find((brief) => brief.id === id);
 
@@ -449,11 +463,23 @@ class ElternPortalApiClient {
 
     const buffer = await this.getFileBuffer(brief?.link ?? "");
 
+    if (validateElternbriefReceipt) {
+      await this.validateElternbriefReceipt(brief);
+    }
+
     const file = {
       name: brief.title,
       buffer,
     };
     return file;
+  }
+
+  private async validateElternbriefReceipt(elternbrief: Elternbrief) {
+    if (elternbrief.readConfirmationId) {
+      await this.client.get(
+        `https://${this.short}.eltern-portal.org/api/elternbrief_bestaetigen.php?eb=${elternbrief.readConfirmationId}`
+      );
+    }
   }
 
   private async getFileBuffer(link: string): Promise<Buffer> {
