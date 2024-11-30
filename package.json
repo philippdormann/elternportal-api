@@ -1,6 +1,6 @@
 {
   "name": "@philippdormann/elternportal-api",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -30,8 +30,7 @@
   ],
   "devDependencies": {
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.7.5",
-    "esno": "4.8.0",
+    "@types/node": "^22.7.8",
     "unbuild": "2.0.0"
   }
 }
