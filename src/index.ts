@@ -5,8 +5,10 @@ import { JSDOM } from "jsdom";
 import { CookieJar } from "tough-cookie";
 
 type Kid = {
-  name: string;
   id: number;
+  firstName: string;
+  lastName: string;
+  className: string;
 };
 type SchoolInfo = {
   key: string;
@@ -129,9 +131,15 @@ class ElternPortalApiClient {
 
     $("select.form-control option").each((_index: number, element) => {
       const id = parseInt($(element).attr("value") || "0");
-      const name = $(element).text().trim();
+      const accountRow = $(element).text().trim();
+      const firstName = accountRow.split(" ")[0];
+      const lastName = accountRow.split(" ")[1];
+      const className = accountRow
+        .split(" ")[2]
+        .replace("(", "")
+        .replace(")", "");
 
-      kids.push({ id, name });
+      kids.push({ id, firstName, lastName, className });
     });
 
     return kids;
