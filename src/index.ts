@@ -315,31 +315,26 @@ class ElternPortalApiClient {
     const { data } = await this.client.get(
       `https://${this.short}.eltern-portal.org/service/stundenplan`
     );
-    const tmp = cheerioLoad(data)(
-      "#asam_content > div > table > tbody tr td"
-    ).get();
+    const $ = cheerioLoad(data);
+    const tmp = $("#asam_content > div > table > tbody tr td");
     // @ts-ignore
     let rows = [];
     let std = 0;
-    tmp.forEach((r) => {
-      const rowsDOM = cheerioLoad(r)("td").get();
-      rowsDOM.forEach((t) => {
-        const rowHTML = cheerioLoad(t).html();
-        if (rowHTML.includes('width="15%"')) {
-          const arr1 = (rowHTML || "").split("<br>");
-          const value = parseInt(
-            (arr1[0] || "").split(">")[1].replace(".", "")
-          );
-          std = value;
-          const detail = (arr1[1] || "").split("<")[0].replaceAll(".", ":");
+    tmp.each((_index: number, element) => {
+      // replace <br> with \n to catch all versions 
+      $(element).find("br").replaceWith("\n");
+      const values = $(element).text().split("\n");
+
+      if ($(element).attr("width") == "15%") {
+        const value = parseInt(values[0]);
+        std = value
+        const detail = (values[1] || "").replaceAll(".", ":");
           rows.push({ type: "info", value, detail, std });
         } else {
-          const arr1 = (rowHTML || "").split("<br>");
-          const value = (arr1[0] || "").split('<span class="">')[1];
-          const detail = (arr1[1] || "").split(" </span>")[0];
+        const value = (values[0] || "");
+        const detail = (values[1] || "");
           rows.push({ type: "class", value, detail, std });
         }
-      });
     });
     // @ts-ignore
     rows = rows.filter((r) => r.std !== null);
