@@ -1,6 +1,6 @@
 {
 	"name": "@philippdormann/elternportal-api",
-	"version": "2.9.0",
+	"version": "2.10.0",
 	"license": "MIT",
 	"exports": "./src/index.ts"
 }
