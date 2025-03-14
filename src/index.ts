@@ -57,6 +57,20 @@ export type ElternportalFile = {
   name: string;
   buffer: Buffer;
 };
+type Vertretung = {
+  date: Date;
+  period: number;
+  originalTeacher: string;
+  substituteTeacher: string;
+  originalClass: string;
+  substituteClass: string;
+  room: string;
+  note: string;
+};
+type VertretungsPlan = {
+  lastUpdate: Date|undefined,
+  substitutions: Vertretung[]
+};
 // =========
 /** gives you a new ElternPortalApiClient instance */
 async function getElternportalClient(
@@ -341,6 +355,69 @@ class ElternPortalApiClient {
     // @ts-ignore
     return rows;
   }
+  /** get substitutions */
+  async getVertretungsplan(): Promise<VertretungsPlan> {
+    const { data } = await this.client.request({
+      method: "GET",
+      url: `https://${this.short}.eltern-portal.org/service/vertretungsplan`,
+    });
+    const $ = cheerioLoad(data);
+
+    const lastUpdate = $('div.main_center div:contains("Stand:")').text();
+    const dateTimeMatch = lastUpdate.match(/Stand:\s(\d{2}\.\d{2}\.\d{4})\s(\d{2}:\d{2}:\d{2})/);
+    let jsDate : Date|undefined = undefined;
+    if (dateTimeMatch) {
+      const [_, datePart, timePart] = dateTimeMatch;
+
+      // Convert to a JavaScript Date object
+      const [day, month, year] = datePart.split('.').map(Number);
+      const [hours, minutes, seconds] = timePart.split(':').map(Number);
+      jsDate = new Date(year, month - 1, day, hours, minutes, seconds);
+    }
+
+
+    const vertretungsplan: VertretungsPlan = {
+      lastUpdate: jsDate,
+      substitutions: []
+    };
+
+    $('div.main_center div.list.bold:contains("KW")').each((_index, element) => {
+      const $element = $(element);
+      const datestring = $element.text();
+
+      const match = datestring.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (!match || match.length != 4) {
+        return false;
+      }
+      const substitutionDate = new Date(+match[3], +match[2], +match[1]);
+
+      // find matching table
+      const table = $element.next();
+      if (!table.is("table")) {
+          return false;
+      }
+
+      // row might contain note about 'Keine Vertretungen'
+      if (table.has('tr:nth-child(2) td[align=center]:contains(Keine Vertretungen)').length > 0) {
+          return false;
+      }
+
+      table.find('tr:not(.vp_plan_head)').each((_index, element) => {
+        const $element = $(element);
+        vertretungsplan.substitutions.push({
+          date: substitutionDate,
+          period: Number.parseInt($element.find("td:nth-child(1)").text()),
+          originalTeacher: $element.find("td:nth-child(2)").text(),
+          substituteTeacher: $element.find("td:nth-child(3)").text(),
+          substituteClass: $element.find("td:nth-child(4) span").text().trim(),
+          originalClass: $element.find("td:nth-child(4) span").remove().text().trim(),
+          room: $element.find("td:nth-child(5)").text(),
+          note: $element.find("td:nth-child(6)").text()
+        });
+      });
+    });
+    return vertretungsplan;
+  }  
   /** get lost and found items */
   async getFundsachen(): Promise<string[]> {
     const { data } = await this.client.get(
