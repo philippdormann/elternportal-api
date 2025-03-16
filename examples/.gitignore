@@ -1,0 +1,13 @@
+# Konfigurationsdatei mit sensiblen Daten
+config.js
+
+# Generierte Dateien
+*.ics
+bekannte-schulaufgaben.json
+
+# macOS
+.DS_Store
+
+# Node.js
+node_modules
+package-lock.json

@@ -1,0 +1,23 @@
+{
+  "name": "elternportal-api-examples",
+  "version": "1.0.0",
+  "description": "Beispiele für die Verwendung der Elternportal-API",
+  "type": "module",
+  "scripts": {
+    "info": "node anzeige-kind-schule.js",
+    "export-schulaufgaben-ical": "node schulaufgaben-ical.js"
+  },
+  "keywords": [
+    "elternportal",
+    "schulaufgaben",
+    "kalender",
+    "ical",
+    "schule"
+  ],
+  "author": "Mirko",
+  "license": "MIT",
+  "dependencies": {
+    "@philippdormann/elternportal-api": "^2.10.0",
+    "crypto": "^1.0.1"
+  }
+}
