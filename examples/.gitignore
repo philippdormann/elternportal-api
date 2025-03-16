@@ -3,7 +3,6 @@ config.js
 
 # Generierte Dateien
 *.ics
-bekannte-schulaufgaben.json
 
 # macOS
 .DS_Store

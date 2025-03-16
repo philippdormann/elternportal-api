@@ -372,16 +372,27 @@ class ElternPortalApiClient {
       .get()
       .map((ele) => {
         if (($(ele).find("td:first").html() as string).includes("<h4>")) {
-          const readConfirmationStringId =
-            $(ele)
-              .find("a")
-              .attr("onclick")
-              ?.match(/eb_bestaetigung\((\d+)\)/)![1] ?? undefined;
+          
+          // Suche nach onclick in a oder span
+          const clickElement = $(ele).find("[onclick*='eb_bestaetigung']");
+          const readConfirmationStringId = clickElement.attr("onclick")
+          ?.match(/eb_bestaetigung\((\d+)\)/)![1] ?? undefined;
+
           const readConfirmationId = readConfirmationStringId
             ? parseInt(readConfirmationStringId)
             : undefined;
-          const title = $(ele).find("td:first a h4").text();
+
+          // Prüfe, ob es ein a-Element gibt oder nur ein span
+          const hasLink = $(ele).find("td:first a").length > 0;
+              
+          // Extrahiere Titel - entweder aus a h4 oder aus span h4
+          const title = hasLink 
+            ? $(ele).find("td:first a h4").text() 
+            : $(ele).find("td:first span h4").text();
+
+
           $(ele).remove("h4");
+
           const messageText = $(ele)
             .find("td:first")
             .clone()
@@ -390,15 +401,31 @@ class ElternPortalApiClient {
             .end()
             .text()
             .trim();
+
           const classes = $(ele)
             .find("span[style='font-size: 8pt;']")
             .text()
             .replace("Klasse/n: ", "");
-          const link = $(ele).find("td:first a").attr("href");
-          const date = $(ele)
-            .find("td:first a")
-            .text()
-            .replace(`${title} `, "");
+
+          // Link nur, wenn a-Element existiert
+          const link = hasLink ? $(ele).find("td:first a").attr("href") : "";
+            
+          // Datum entweder aus a oder aus span
+          let date = "";
+          if (hasLink) {
+            date = $(ele)
+              .find("td:first a")
+              .text()
+              .replace(`${title} `, "");
+          } else {
+            date = $(ele)
+              .find("td:first span.link_nachrichten")
+              .text()
+              .replace(`${title} `, "")
+              .replace(/\(.*?\)/g, "") // Entferne Text in Klammern
+              .trim();
+          }
+
           $(ele).remove("a");
           return {
             readConfirmationId,
