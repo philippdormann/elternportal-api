@@ -84,6 +84,12 @@ const bulletinFile = await client.getSchwarzesBrettFile(fileId);
 const letterFile = await client.getElternbrief(letterId);
 ```
 
+#### Get exam schedule
+
+```typescript
+const examSchedule = await client.getSchulaufgabenplan();
+```
+
 ## Types 📝
 
 The library includes TypeScript definitions for various data structures:
