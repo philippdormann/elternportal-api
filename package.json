@@ -1,36 +1,41 @@
 {
-  "name": "@philippdormann/elternportal-api",
-  "version": "2.10.0",
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "build": "unbuild"
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "description": "unofficial art soft and more Elternportal-API",
-  "dependencies": {
-    "axios": "1.7.9",
-    "axios-cookiejar-support": "5.0.5",
-    "cheerio": "1.0.0",
-    "jsdom": "^26.0.0",
-    "tough-cookie": "5.1.1"
-  },
-  "files": [
-    "./package.json",
-    "./dist"
-  ],
-  "devDependencies": {
-    "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.13.4",
-    "unbuild": "3.3.1"
-  }
+	"name": "@philippdormann/elternportal-api",
+	"version": "2.10.0",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"build": "unbuild"
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./dist/index.cjs",
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"description": "unofficial art soft and more Elternportal-API",
+	"dependencies": {
+		"axios": "1.8.3",
+		"axios-cookiejar-support": "5.0.5",
+		"cheerio": "1.0.0",
+		"jsdom": "^26.0.0",
+		"tough-cookie": "5.1.2"
+	},
+	"files": [
+		"./package.json",
+		"./dist"
+	],
+	"devDependencies": {
+		"@types/jsdom": "^21.1.7",
+		"@types/node": "^22.13.10",
+		"unbuild": "3.5.0"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	}
 }
