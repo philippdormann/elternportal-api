@@ -389,7 +389,7 @@ class ElternPortalApiClient {
       if (!match || match.length != 4) {
         return false;
       }
-      const substitutionDate = new Date(+match[3], +match[2], +match[1]);
+      const substitutionDate = new Date(+match[3], +match[2] - 1, +match[1]);
 
       // find matching table
       const table = $element.next();
