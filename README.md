@@ -11,6 +11,8 @@ This library provides an easy-to-use interface for interacting with the ElternPo
 - **Calendar**: Retrieve school events and schedules
 - **Parent Letters**: Access and download parent letters (Elternbriefe)
 - **Lost and Found**: View items in the lost and found section
+- **Exam Schedules**: Get the dates of upcoming exams
+- **Substitute Plan**: Check for changes of the timetable 
 
 ## Installation 💻
 
@@ -84,10 +86,16 @@ const bulletinFile = await client.getSchwarzesBrettFile(fileId);
 const letterFile = await client.getElternbrief(letterId);
 ```
 
-#### Get exam schedule
+#### Get exam schedule 📆
 
 ```typescript
 const examSchedule = await client.getSchulaufgabenplan();
+```
+
+#### Get substitute plan 🔄
+
+```typescript
+const substitutePlan = await client.getVertretungsplan();
 ```
 
 ## Types 📝
@@ -99,3 +107,4 @@ The library includes TypeScript definitions for various data structures:
 - `Elternbrief` (Parent Letter)
 - `SchwarzesBrettBox` (Bulletin Board Item)
 - `ElternportalFile`
+- `Vertretungsplan`
