@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { load as cheerioLoad } from "cheerio";
 import { JSDOM } from "jsdom";
-import { CookieJar } from "tough-cookie";
+import { Cookie, CookieJar } from "tough-cookie";
 
 type Kid = {
   id: number;
@@ -42,7 +42,6 @@ type ElternPortalApiClientConfig = {
   short: string;
   username: string;
   password: string;
-  kidId: number | undefined;
 };
 type SchwarzesBrettBox = {
   id: number | null;
@@ -92,7 +91,6 @@ class ElternPortalApiClient {
     this.short = config.short;
     this.username = config.username;
     this.password = config.password;
-    this.kidId = config.kidId || 0;
     //
     this.jar = new CookieJar();
     this.client = wrapper(axios.create({ jar: this.jar }));
@@ -100,63 +98,31 @@ class ElternPortalApiClient {
   async init() {
     const { data } = await this.client.request({
       method: "GET",
-      url: `https://${this.short}.eltern-portal.org/`,
+      url: `https://api.schueler.schule-infoportal.de/${this.short}/api/school`,
     });
     const $ = cheerioLoad(data);
-    const parsedCSRFToken = $(`[name='csrf']`).val() as string;
-    this.csrf = parsedCSRFToken;
-
-    await this.setKid(this.kidId);
+    const cookies = await this.jar.getCookies("https://api.schueler.schule-infoportal.de/${this.short}/api/school");
+    console.log("Cookies:", cookies.map(cookie => cookie.toString()));
+    const target = cookies.find(c => c.key === 'XSRF-TOKEN')?.cookieString();
+    if(target) this.csrf = target;
+    console.log(this.csrf);
+    await this.login(cookies);
   }
 
-  async setKid(kidId: number) {
+  async login(cookies : Cookie[]) {
+    const json = JSON.stringify({ email: this.username, password: this.password });
+    const cookieHeader = this.csrf +"; " + cookies.find(c => c.key === 'schuelerportal_session')?.cookieString();
+    console.log(cookieHeader);
     await this.client.request({
       method: "POST",
-      url: `https://${this.short}.eltern-portal.org/includes/project/auth/login.php`,
+      url: `https://api.schueler.schule-infoportal.de/${this.short}/login`,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
+        "Cookie": cookieHeader,
+        "X-XSRF-TOKEN": decodeURIComponent(this.csrf.replace("XSRF-TOKEN=","")),
       },
-      data: {
-        csrf: this.csrf,
-        username: this.username,
-        password: this.password,
-        go_to: "",
-      },
+      data: json,
     });
-
-    const response = await this.client.request({
-      method: "POST",
-      url: `https://${this.short}.eltern-portal.org/api/set_child.php?id=${kidId}`,
-    });
-
-    if (response.data === 1) {
-      // console.log("Kid set to:", kidId);
-    } else {
-      // console.log("Failed to set kid to:", kidId);
-    }
-  }
-  /** list all kids in account */
-  async getKids(): Promise<Kid[]> {
-    const { data } = await this.client.get(
-      `https://${this.short}.eltern-portal.org/start`
-    );
-    const $ = cheerioLoad(data);
-    const kids: Kid[] = [];
-
-    $("select.form-control option").each((_index: number, element) => {
-      const id = parseInt($(element).attr("value") || "0");
-      const accountRow = $(element).text().trim();
-      const firstName = accountRow.split(" ")[0];
-      const lastName = accountRow.split(" ")[1];
-      const className = accountRow
-        .split(" ")[2]
-        .replace("(", "")
-        .replace(")", "");
-
-      kids.push({ id, firstName, lastName, className });
-    });
-
-    return kids;
   }
 
   /** get array of blackboard items */
